@@ -4,7 +4,6 @@ from .models import (
     Catalogo06DocumentoIdentidad,
     EstadoDocumento,
     Usuario,
-    TipoComprobante,
     Cliente,
     Catalogo05TiposTributos,
     Catalogo15ElementosAdicionales,
@@ -22,7 +21,6 @@ admin.site.register(Catalogo01TipoDocumento)
 admin.site.register(Catalogo06DocumentoIdentidad)
 admin.site.register(EstadoDocumento)
 admin.site.register(Usuario)
-admin.site.register(TipoComprobante)
 admin.site.register(Cliente)
 admin.site.register(Catalogo05TiposTributos)
 admin.site.register(Catalogo15ElementosAdicionales)

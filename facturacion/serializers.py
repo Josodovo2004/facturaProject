@@ -4,7 +4,6 @@ from .models import (
     Catalogo06DocumentoIdentidad,
     EstadoDocumento,
     Usuario,
-    TipoComprobante,
     Cliente,
     Catalogo05TiposTributos,
     Catalogo15ElementosAdicionales,
@@ -38,10 +37,6 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = '__all__'
 
-class TipoComprobanteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TipoComprobante
-        fields = '__all__'
 
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:

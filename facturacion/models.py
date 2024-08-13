@@ -51,13 +51,6 @@ class Usuario(models.Model):
     def __str__(self):
         return self.rznSocialUsuario
 
-class TipoComprobante ( models.Model):
-    idTipoComprobante= models.CharField(primary_key=True, max_length=2)
-    descripcion=models.CharField(max_length=30,null=True,blank=True)
-
-    def __str__(self):
-        return self.descripcion
-
 class Cliente(models.Model):
     cfcodcli = models.CharField(db_column='CFCODCLI', max_length=11, primary_key=True)  # Field name made lowercase.
     cfnombre = models.CharField(db_column='CFNOMBRE', max_length=100, blank=True, null=True)  # Field name made lowercase.
@@ -77,7 +70,7 @@ class Catalogo05TiposTributos(models.Model):
         db_table = 'CATALOGO_05_TIPOS_TRIBUTOS'
 
     def __str__(self) -> str:
-        return self.name
+        return self.nombre
 
 
 class Catalogo15ElementosAdicionales(models.Model):

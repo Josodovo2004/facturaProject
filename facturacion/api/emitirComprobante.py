@@ -144,24 +144,45 @@ def emitirComprobanteAPI(request):
 
     itemsDict = []
 
+    taxesDict = {}
+    taxTotal = 0
+    totalOperacionesGravadas = 0
+    totalValorSinImpuestos = 0
+
     for item in ItemsComprobante:
         item : ComprobanteItem
         itemTax = ItemImpuesto.objects.filter(item_id = item.item.id)
         tax = {}
         
-        taxTotal = 0
+        taxTotalitem = 0
 
         for impuesto in itemTax:
             impuesto: ItemImpuesto
             tax[f'{impuesto.impuesto.nombre}'] = {
-                'MontoTotalImpuesto': impuesto.porcentaje * impuesto.valorGravado,  # Total del IGV aplicado
+                'MontoTotalImpuesto': (impuesto.porcentaje/100) * impuesto.valorGravado * item.cantidad,  # Total del IGV aplicado
                 "tasaImpuesto": impuesto.porcentaje,  # Tasa del IGV en porcentaje
-                "operacionesGravadas": impuesto.valorGravado,  # Total de operaciones gravadas sujetas a IGV
+                "operacionesGravadas": impuesto.valorGravado * item.cantidad,  # Total de operaciones gravadas sujetas a IGV
                 'cod1' : impuesto.impuesto.codigo,
                 'cod2' : impuesto.impuesto.nombre,
                 'cod3' : impuesto.impuesto.un_ece_5153,
             }
-            taxTotal += (impuesto.porcentaje/100) * impuesto.valorGravado
+            taxTotal += (impuesto.porcentaje/100) * impuesto.valorGravado * item.cantidad
+            taxTotalitem += (impuesto.porcentaje/100) * impuesto.valorGravado * item.cantidad
+            totalOperacionesGravadas += impuesto.valorGravado * item.cantidad
+            
+
+            if f'{impuesto.impuesto.nombre}' in taxesDict:
+                taxesDict[f'{impuesto.impuesto.nombre}']['MontoTotalImpuesto'] += (impuesto.porcentaje/100) * impuesto.valorGravado * item.cantidad
+                taxesDict[f'{impuesto.impuesto.nombre}']["operacionesGravadas"] += impuesto.valorGravado * item.cantidad
+            else:
+                taxesDict[f'{impuesto.impuesto.nombre}'] = {
+                'MontoTotalImpuesto': (impuesto.porcentaje/100) * impuesto.valorGravado * item.cantidad,  # Total del IGV aplicado
+                "tasaImpuesto": impuesto.porcentaje,  # Tasa del IGV en porcentaje
+                "operacionesGravadas": impuesto.valorGravado * item.cantidad,  # Total de operaciones gravadas sujetas a IGV
+                'cod1' : impuesto.impuesto.codigo,
+                'cod2' : impuesto.impuesto.nombre,
+                'cod3' : impuesto.impuesto.un_ece_5153,
+            }
 
         itemsDict.append({
             "unidadMedida": item.item.unidadMedida.codigo,  # Assuming NIU for product unit
@@ -171,15 +192,25 @@ def emitirComprobanteAPI(request):
             'DescripcionItem': item.item.descripcion,
             "tipoPrecio": item.item.tipoPrecio.codigo,  # Assuming 01 is for unit price with taxes
             "totalValorVenta": item.item.valorUnitario*item.cantidad,
-            'ValorVentaItem': (item.item.valorUnitario + taxTotal) *item.cantidad,
+            'ValorVentaItem': (item.item.valorUnitario + taxTotalitem) *item.cantidad,
             'tax' : tax,
             })
-    
+        
+        totalValorSinImpuestos += item.item.valorUnitario*item.cantidad
 
-    taxesDict = {}
-    
 
-    comprobanteDict = {}
+    comprobanteDict = {
+        "serieDocumento": comprobante.serie,
+        "numeroDocumento": comprobante.numeroComprobante,
+        "fechaEmision": comprobante.fechaEmision,
+        "codigoMoneda": comprobante.codigoMoneda.codigo,  
+        'ImporteTotalVenta': totalValorSinImpuestos,
+        'MontoTotalImpuestos': taxTotal,
+        "totalOperacionesGravadas": totalOperacionesGravadas,
+        "totalOperacionesExoneradas": totalValorSinImpuestos - totalOperacionesGravadas,
+        "totalOperacionesInafectas": '0.00',
+        "totalConImpuestos" : totalValorSinImpuestos + taxTotal,
+    }
 
     data = {'emisor': emisorDict, 'adquiriente' : adquirienteDict, 'comprobante' : comprobanteDict, 'taxes': taxesDict, 'items' : itemsDict}
 
