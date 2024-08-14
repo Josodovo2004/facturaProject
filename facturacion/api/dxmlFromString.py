@@ -1,5 +1,5 @@
 
-def dxmlFromString(data):
+def dxmlFromString(data, fileName):
     comprobante = data["comprobante"]
     emisor = data["emisor"]
     adquiriente =  data["adquiriente"]
@@ -33,7 +33,7 @@ def dxmlFromString(data):
     <cbc:DueDate>2021-08-07</cbc:DueDate>
     <cbc:InvoiceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" 
                          listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01" 
-                         listID="0101" name="Tipo de Operacion">01</cbc:InvoiceTypeCode>
+                         listID="0101" name="Tipo de Operacion">{comprobante["tipoComprobante"]}</cbc:InvoiceTypeCode>
     <cbc:DocumentCurrencyCode listID="ISO 4217 Alpha" listName="Currency" 
                               listAgencyName="United Nations Economic Commission for Europe">PEN</cbc:DocumentCurrencyCode>
     <cbc:LineCountNumeric>1</cbc:LineCountNumeric>
@@ -80,9 +80,6 @@ def dxmlFromString(data):
                 <cac:RegistrationAddress>
                     <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">{emisor["ubigeo"]}</cbc:ID>
                     <cbc:AddressTypeCode listAgencyName="PE:SUNAT" listName="Establecimientos anexos">0000</cbc:AddressTypeCode>
-                    <cbc:CityName><![CDATA[]]></cbc:CityName>
-                    <cbc:CountrySubentity><![CDATA[]]></cbc:CountrySubentity>
-                    <cbc:District><![CDATA[]]></cbc:District>
                     <cac:AddressLine>
                         <cbc:Line><![CDATA[{emisor["calle"]} - {emisor["distrito"]} - {emisor["provincia"]} - {emisor["departamento"]}]]></cbc:Line>
                     </cac:AddressLine>
@@ -177,9 +174,10 @@ def dxmlFromString(data):
     </cac:LegalMonetaryTotal>'''
 
     thing = ''
-    itemTaxSubtotal = ''
     for item in items:
+        itemTaxSubtotal = ''
         for tax in item["tax"].values():
+            print('a')
             itemTaxSubtotal += f'''<cac:TaxSubtotal>
                 <cbc:TaxableAmount currencyID="PEN">{tax["operacionesGravadas"]}</cbc:TaxableAmount>
                 <cbc:TaxAmount currencyID="PEN">{tax["MontoTotalImpuesto"]}</cbc:TaxAmount>
@@ -188,8 +186,8 @@ def dxmlFromString(data):
                             schemeAgencyName="United Nations Economic Commission for Europe">S</cbc:ID>
                     <cbc:Percent>18</cbc:Percent>
                     <cbc:TaxExemptionReasonCode listAgencyName="PE:SUNAT" 
-                                                 listName="Afectacion del IGV" 
-                                                 listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">10</cbc:TaxExemptionReasonCode>
+                                                listName="Afectacion del IGV" 
+                                                listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">10</cbc:TaxExemptionReasonCode>
                     <cac:TaxScheme>
                         <cbc:ID schemeID="UN/ECE 5153" schemeName="Codigo de tributos" 
                                 schemeAgencyName="PE:SUNAT">{tax["cod1"]}</cbc:ID>
@@ -198,15 +196,16 @@ def dxmlFromString(data):
                     </cac:TaxScheme>
                 </cac:TaxCategory>
             </cac:TaxSubtotal>'''
+
         newItem = f'''
             <cac:InvoiceLine>
-        <cbc:ID>1</cbc:ID>
+        <cbc:ID>{item["id"]}</cbc:ID>
         <cbc:InvoicedQuantity unitCode="{item["unidadMedida"]}" unitCodeListID="UN/ECE rec 20" 
                               unitCodeListAgencyName="United Nations Economic Commission for Europe">{item["CantidadUnidadesItem"]}</cbc:InvoicedQuantity>
         <cbc:LineExtensionAmount currencyID="PEN">{item["totalValorVenta"]}</cbc:LineExtensionAmount>
         <cac:PricingReference>
             <cac:AlternativeConditionPrice>
-                <cbc:PriceAmount currencyID="PEN">{item["ValorVentaItem"]}</cbc:PriceAmount>
+                <cbc:PriceAmount currencyID="PEN">{item["precioUnitarioConImpuestos"]}</cbc:PriceAmount>
                 <cbc:PriceTypeCode listName="Tipo de Precio" listAgencyName="PE:SUNAT" 
                                    listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo16">{item["tipoPrecio"]}</cbc:PriceTypeCode>
             </cac:AlternativeConditionPrice>
@@ -216,7 +215,7 @@ def dxmlFromString(data):
             {itemTaxSubtotal}
         </cac:TaxTotal>
         <cac:Item>
-            <cbc:Description><![CDATA[FENA X L]]></cbc:Description>
+            <cbc:Description>{item["DescripcionItem"]}</cbc:Description>
             <cac:SellersItemIdentification>
                 <cbc:ID><![CDATA[{item["id"]}]]></cbc:ID>
             </cac:SellersItemIdentification>
@@ -235,7 +234,7 @@ def dxmlFromString(data):
 
     xml_invoice = signature + emisordata + compradorData + paymentTerms + taxTotal + legalMonetaryTotal + thing + '</Invoice>'
     
-    with open(f'xml/{emisor["DocumentoEmisor"]}-01-{comprobante["serieDocumento"]}-{comprobante["numeroDocumento"]}.xml', 'w', encoding='utf-8') as file:
+    with open(f'xml/{fileName}', 'w', encoding='utf-8') as file:
             file.write(xml_invoice)
 
-    return f'xml/{emisor["DocumentoEmisor"]}-01-{comprobante["serieDocumento"]}-{comprobante["numeroDocumento"]}.xml'
+    return f'xml/{fileName}'
