@@ -1,11 +1,11 @@
 from lxml import etree as ET
 import xmlsec
 from django.http import JsonResponse
-from datetime import date, time
 from facturacion.api.getpfx import extract_pfx_details
 from facturacion.api.dxmlFromString import dxmlFromString
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import pkcs12
+from datetime import timedelta
 import io
 import zipfile
 import base64
@@ -145,6 +145,7 @@ def emitirComprobanteAPI(request):
     itemsDict = []
 
     taxesDict = {}
+    numItems = 0
     taxTotal = 0
     totalOperacionesGravadas = 0
     totalValorSinImpuestos = 0
@@ -182,6 +183,7 @@ def emitirComprobanteAPI(request):
                 'cod1' : impuesto.impuesto.codigo,
                 'cod2' : impuesto.impuesto.nombre,
                 'cod3' : impuesto.impuesto.un_ece_5153,
+                'cod4' : impuesto.impuesto.un_ece_5305,
             }
 
         itemsDict.append({
@@ -199,7 +201,7 @@ def emitirComprobanteAPI(request):
             'tax' : tax,
             })
     
- 
+        numItems += item.cantidad
         totalValorSinImpuestos += item.item.valorUnitario*item.cantidad
 
     for value in itemsDict:
@@ -212,6 +214,7 @@ def emitirComprobanteAPI(request):
         "serieDocumento": comprobante.serie,
         "numeroDocumento": comprobante.numeroComprobante,
         "fechaEmision": comprobante.fechaEmision,
+        "DueDate" : comprobante.fechaEmision + timedelta(weeks=1),
         "codigoMoneda": comprobante.codigoMoneda.codigo,
         "tipoComprobante" : comprobante.tipoComprobante.codigo,  
         'ImporteTotalVenta': round(totalValorSinImpuestos,2),
@@ -220,6 +223,7 @@ def emitirComprobanteAPI(request):
         "totalOperacionesExoneradas": round(totalValorSinImpuestos - totalOperacionesGravadas, 2),
         "totalOperacionesInafectas": '0.00',
         "totalConImpuestos" : round(totalValorSinImpuestos + taxTotal,2),
+        'cantidadItems' : numItems,
     }
 
 

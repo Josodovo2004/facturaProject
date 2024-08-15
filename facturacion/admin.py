@@ -6,6 +6,7 @@ from .models import (
     Usuario,
     Cliente,
     Catalogo05TiposTributos,
+    Catalogo07TiposDeAfectacionDelIGV,
     Catalogo15ElementosAdicionales,
     Ubigeo,
     CodigoPais,
@@ -23,6 +24,7 @@ admin.site.register(EstadoDocumento)
 admin.site.register(Usuario)
 admin.site.register(Cliente)
 admin.site.register(Catalogo05TiposTributos)
+admin.site.register(Catalogo07TiposDeAfectacionDelIGV)
 admin.site.register(Catalogo15ElementosAdicionales)
 admin.site.register(Ubigeo)
 admin.site.register(CodigoPais)

@@ -30,13 +30,13 @@ def dxmlFromString(data, fileName):
     <cbc:ID>{comprobante["serieDocumento"]}-{comprobante["numeroDocumento"]}</cbc:ID>
     <cbc:IssueDate>{comprobante["fechaEmision"]}</cbc:IssueDate>
     <cbc:IssueTime>00:00:00</cbc:IssueTime>
-    <cbc:DueDate>2021-08-07</cbc:DueDate>
+    <cbc:DueDate>{comprobante["DueDate"]}</cbc:DueDate>
     <cbc:InvoiceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Documento" 
                          listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01" 
                          listID="0101" name="Tipo de Operacion">{comprobante["tipoComprobante"]}</cbc:InvoiceTypeCode>
     <cbc:DocumentCurrencyCode listID="ISO 4217 Alpha" listName="Currency" 
                               listAgencyName="United Nations Economic Commission for Europe">PEN</cbc:DocumentCurrencyCode>
-    <cbc:LineCountNumeric>1</cbc:LineCountNumeric>
+    <cbc:LineCountNumeric>{comprobante["cantidadItems"]}</cbc:LineCountNumeric>
     <cac:Signature>
         <cbc:ID>{comprobante["serieDocumento"]}-{comprobante["numeroDocumento"]}</cbc:ID>
         <cac:SignatoryParty>
@@ -150,7 +150,7 @@ def dxmlFromString(data, fileName):
             <cbc:TaxAmount currencyID="PEN">{tax["MontoTotalImpuesto"]}</cbc:TaxAmount>
             <cac:TaxCategory>
                 <cbc:ID schemeID="UN/ECE 5305" schemeName="Tax Category Identifier" 
-                        schemeAgencyName="United Nations Economic Commission for Europe">S</cbc:ID>
+                        schemeAgencyName="United Nations Economic Commission for Europe">{tax["cod4"]}</cbc:ID>
                 <cac:TaxScheme>
                     <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">{tax["cod1"]}</cbc:ID>
                     <cbc:Name>{tax["cod2"]}</cbc:Name>
@@ -226,7 +226,7 @@ def dxmlFromString(data, fileName):
             </cac:CommodityClassification>
         </cac:Item>
         <cac:Price>
-            <cbc:PriceAmount currencyID="PEN">{item["ValorVentaItem"]}</cbc:PriceAmount>
+            <cbc:PriceAmount currencyID="PEN">{item["precioUnitario"]}</cbc:PriceAmount>
         </cac:Price>
     </cac:InvoiceLine>
 '''
