@@ -184,7 +184,6 @@ class Entidad(models.Model):
     def __str__(self) -> str:
         return self.nombreComercial
 
-
 class Item(models.Model):
     unidadMedida = models.ForeignKey(UnidadMedida, on_delete=models.CASCADE)
     tipoPrecio = models.ForeignKey(TipoPrecio, on_delete=models.CASCADE)
