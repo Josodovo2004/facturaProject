@@ -1,5 +1,6 @@
+import os
 
-def dxmlFromString(data, fileName):
+def dxmlFromString(data, fileName : str):
     comprobante = data["comprobante"]
     emisor = data["emisor"]
     adquiriente =  data["adquiriente"]
@@ -233,8 +234,15 @@ def dxmlFromString(data, fileName):
         thing += newItem
 
     xml_invoice = signature + emisordata + compradorData + paymentTerms + taxTotal + legalMonetaryTotal + thing + '</Invoice>'
-    
-    with open(f'xml/{fileName}', 'w', encoding='utf-8') as file:
-            file.write(xml_invoice)
 
-    return f'xml/{fileName}'
+    # Extract the folder path
+    folder_path = f"xml/{fileName.replace('.xml', '')}"
+
+    # Ensure the folder exists
+    os.makedirs(folder_path, exist_ok=True)
+
+    # Now you can safely create the file
+    with open(f'{folder_path}/{fileName}', 'w', encoding='utf-8') as file:
+        file.write(xml_invoice)
+
+    return f'{folder_path}/{fileName}'

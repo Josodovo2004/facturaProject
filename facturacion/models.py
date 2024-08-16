@@ -90,6 +90,10 @@ class Catalogo15ElementosAdicionales(models.Model):
     class Meta:
         db_table = 'CATALOGO_15_ELEMENTOS_ADICIONALES'
 
+
+class Catalogo51TipoDeOperacion(models.Model):
+    pass
+
 class Ubigeo(models.Model):
     codigo = models.CharField(max_length=10, null=False)
     distrito = models.CharField(max_length=32, null=False)
@@ -207,6 +211,8 @@ class Comprobante(models.Model):
     emisor = models.ForeignKey(Entidad, on_delete=models.DO_NOTHING, null=False, related_name='comprobantes_emitidos')
     adquiriente = models.ForeignKey(Entidad, on_delete=models.DO_NOTHING, null=False, related_name='comprobantes_recibidos')
     tipoComprobante = models.ForeignKey(Catalogo01TipoDocumento, on_delete= models.DO_NOTHING, null=False)
+    tipoOperacion = ''
+    tipoPago = ''
     serie = models.CharField(max_length=4, null=False)
     numeroComprobante = models.CharField(max_length=8, null=False)
     fechaEmision = models.DateField(default=tm.now, null=False)

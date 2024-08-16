@@ -90,8 +90,8 @@ def modify_xml(file_path):
 
 
 def zip_and_encode_base64(xml_file_path: str):
-    nombrexml = xml_file_path.split('/')[1]  # Extract the XML file name from the path
-    carpetaxml = 'xml/'  # Path to the directory containing the XML file
+    nombrexml = xml_file_path.split('/')[-1]  # Extract the XML file name from the path
+    carpetaxml = f'xml/{nombrexml.replace('.xml', '')}'  # Path to the directory containing the XML file
     rutaxml = os.path.join(carpetaxml, nombrexml)
     nombrezip = nombrexml.replace('.xml', '.zip')
     rutazip = os.path.join(carpetaxml, nombrezip)
@@ -204,12 +204,6 @@ def emitirComprobanteAPI(request):
         numItems += item.cantidad
         totalValorSinImpuestos += item.item.valorUnitario*item.cantidad
 
-    for value in itemsDict:
-        value : dict
-        for key,item in value.items():
-            print(f'{key}:{item}')
-
-
     comprobanteDict = {
         "serieDocumento": comprobante.serie,
         "numeroDocumento": comprobante.numeroComprobante,
@@ -258,7 +252,7 @@ def emitirComprobanteAPI(request):
  </soapenv:Header>
  <soapenv:Body>
 	<ser:sendBill>
-		<fileName>{filePath.replace(".xml", ".ZIP").split('/')[1]}</fileName>
+		<fileName>{fileName.replace(".xml", ".ZIP")}</fileName>
 		<contentFile>{encodedZip}</contentFile>
 	</ser:sendBill>
  </soapenv:Body>
@@ -325,8 +319,18 @@ def emitirComprobanteAPI(request):
                             # Extract all the files to the specified directory
                             zip_ref.extractall('facturacion/api/response')
 
+                            responseFile: ET = ET.parse(f'facturacion/api/response/R-{fileName}')
+
+                            namespaces = {'cbc' : 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2'}
+
+                            response_code = responseFile.findtext('.//cbc:ResponseCode', namespaces=namespaces)
+                            description = responseFile.findtext('.//cbc:Description', namespaces=namespaces)
+
                         # Return a success message as a JSON response
-                        return JsonResponse({'message': 'ZIP file processed and extracted successfully.'})
+                            if response_code == '0':
+                                return JsonResponse({'message': 'Comprobante aceptado'})
+                            else:
+                                return JsonResponse({'error': f'{response_code}', 'descripcion': f'{description}'})
                     except zipfile.BadZipFile:
                         return JsonResponse({'error': 'The file is not a valid ZIP file.'}, status=400)
                 else:
