@@ -90,9 +90,17 @@ class Catalogo15ElementosAdicionales(models.Model):
     class Meta:
         db_table = 'CATALOGO_15_ELEMENTOS_ADICIONALES'
 
+class Catalogo51Choices(models.TextChoices):
+    A = 'a', 'Option A'
+    B = 'b', 'Option B'
 
 class Catalogo51TipoDeOperacion(models.Model):
-    pass
+    codigo = models.CharField(db_column='codigo', max_length=4, primary_key=True)
+    descripcion = models.CharField(max_length=200)
+    comprobantes = models.CharField(
+        max_length=1,  # Adjust the max_length to fit the longest choice value
+        choices=Catalogo51Choices.choices
+    )
 
 class Ubigeo(models.Model):
     codigo = models.CharField(max_length=10, null=False)
