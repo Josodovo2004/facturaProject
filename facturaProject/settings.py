@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'facturacion.apps.FacturacionConfig',
     'anulacion.apps.AnulacionConfig',
+    'notaCredito.apps.NotacreditoConfig',
     'rest_framework'
 ]
 
