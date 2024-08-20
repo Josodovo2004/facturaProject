@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'facturacion.apps.FacturacionConfig',
+    'notaCredito.apps.NotacreditoConfig',
     'rest_framework'
 ]
 
