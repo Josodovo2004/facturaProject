@@ -1,6 +1,6 @@
+import os
 
-
-def emitirNotaCredito(data):
+def stringNotaCreditoAnulacion(data):
 
     emisor = data["emisor"]
     cabecera = data["cabecera"]
@@ -8,7 +8,7 @@ def emitirNotaCredito(data):
     items = data["items"]
 
 
-    nombrexml = f"{emisor['ruc']}-{cabecera['tipo_comprobante']}-{cabecera['serie']}-{cabecera['correlativo']}"
+    fileName = f"{emisor['ruc']}-{cabecera['tipo_comprobante']}-{cabecera['serie']}-{cabecera['correlativo']}.xml"
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
     <CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ccts="urn:un:unece:uncefact:documentation:2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" xmlns:sac="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -199,3 +199,13 @@ def emitirNotaCredito(data):
 
     # Closing the XML
     xml += "</CreditNote>"
+
+    folder_path = f"notaCredito/xml/{fileName.replace('.xml', '')}"
+
+    os.makedirs(folder_path, exist_ok=True)
+
+    with open(f'{folder_path}/{fileName}', 'w', encoding='ISO-8859-1') as file:
+        file.write(xml)
+
+    return f'{folder_path}/{fileName}'
+    

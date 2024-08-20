@@ -15,7 +15,8 @@ from .serializers import (
     ComprobanteItemSerializer
 )
 
-from .api.emitirComprobante import emitirComprobanteAPI
+from .api.comprobantes.emitirComprobante import emitirComprobanteAPI
+from .api.comunicadoBajas.anulacionFactura import emitirComunicadoAnulacion
 
 # CRUD views for Entidad
 class EntidadListCreateView(generics.ListCreateAPIView):
@@ -65,3 +66,6 @@ class ComprobanteItemRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPI
 
 def emitirComprobante(request):
     return emitirComprobanteAPI(request)
+
+def anular_factura(request):
+    return emitirComunicadoAnulacion(request)

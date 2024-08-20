@@ -11,6 +11,7 @@ from .views import (
     ComprobanteItemListCreateView,
     ComprobanteItemRetrieveUpdateDestroyView,
     emitirComprobante,
+    anular_factura,
 )
 
 urlpatterns = [
@@ -34,5 +35,6 @@ urlpatterns = [
     path('comprobante-items/', ComprobanteItemListCreateView.as_view(), name='comprobante-item-list-create'),
     path('comprobante-items/<int:pk>/', ComprobanteItemRetrieveUpdateDestroyView.as_view(), name='comprobante-item-retrieve-update-destroy'),
     
-    path('emitir_comprobante/', emitirComprobante, name='emitircomprobante')
+    path('emitir_comprobante/', emitirComprobante, name='emitircomprobante'),
+    path('anular_factura/', anular_factura, name='anular_factura')
 ]
