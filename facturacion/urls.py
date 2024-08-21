@@ -12,6 +12,7 @@ from .views import (
     ComprobanteItemRetrieveUpdateDestroyView,
     emitirComprobante,
     anular_factura,
+    comunicadoBaja,
 )
 
 urlpatterns = [
@@ -36,5 +37,6 @@ urlpatterns = [
     path('comprobante-items/<int:pk>/', ComprobanteItemRetrieveUpdateDestroyView.as_view(), name='comprobante-item-retrieve-update-destroy'),
     
     path('emitir_comprobante/', emitirComprobante, name='emitircomprobante'),
-    path('anular_factura/', anular_factura, name='anular_factura')
+    path('anular_factura/', anular_factura, name='anular_factura'),
+    path('comunicado_baja/', comunicadoBaja, name='comunicado_baja'),
 ]

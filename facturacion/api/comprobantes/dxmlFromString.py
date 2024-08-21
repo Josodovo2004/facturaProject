@@ -175,6 +175,7 @@ def dxmlFromString(data, fileName : str):
     </cac:LegalMonetaryTotal>'''
 
     thing = ''
+    innerId = 1
     for item in items:
         itemTaxSubtotal = ''
         for tax in item["tax"].values():
@@ -200,7 +201,7 @@ def dxmlFromString(data, fileName : str):
 
         newItem = f'''
             <cac:InvoiceLine>
-        <cbc:ID>{item["id"]}</cbc:ID>
+        <cbc:ID>{innerId}</cbc:ID>
         <cbc:InvoicedQuantity unitCode="{item["unidadMedida"]}" unitCodeListID="UN/ECE rec 20" 
                               unitCodeListAgencyName="United Nations Economic Commission for Europe">{item["CantidadUnidadesItem"]}</cbc:InvoicedQuantity>
         <cbc:LineExtensionAmount currencyID="PEN">{item["totalValorVenta"]}</cbc:LineExtensionAmount>
@@ -231,6 +232,7 @@ def dxmlFromString(data, fileName : str):
         </cac:Price>
     </cac:InvoiceLine>
 '''
+        innerId+=1
         thing += newItem
 
     xml_invoice = signature + emisordata + compradorData + paymentTerms + taxTotal + legalMonetaryTotal + thing + '</Invoice>'

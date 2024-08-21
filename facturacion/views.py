@@ -17,7 +17,7 @@ from .serializers import (
 
 from .api.comprobantes.emitirComprobante import emitirComprobanteAPI
 from .api.comunicadoBajas.anulacionFactura import emitirComunicadoAnulacion
-
+from .api.notaCredito.emitirNotaCredito import emitirNotaCredito
 # CRUD views for Entidad
 class EntidadListCreateView(generics.ListCreateAPIView):
     queryset = Entidad.objects.all()
@@ -68,4 +68,7 @@ def emitirComprobante(request):
     return emitirComprobanteAPI(request)
 
 def anular_factura(request):
+    return emitirNotaCredito(request)
+
+def comunicadoBaja(request):
     return emitirComunicadoAnulacion(request)

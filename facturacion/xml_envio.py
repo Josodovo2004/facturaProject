@@ -42,11 +42,9 @@ def envio_xml(comprobante, fileName, encodedZip, tipo=True):
     }
 
     # Send the request
-    try:
-        response = requests.post(url=ws, data=xml_envio, headers=headers, verify=ca_bundle_path)
-        response.raise_for_status()  # Raise an exception for HTTP error codes
-    except requests.RequestException as e:
-        print(f"Error sending request: {e}")
-        return None
 
+    response = requests.post(url=ws, data=xml_envio, headers=headers, verify=ca_bundle_path)
+    print(response.content)
+    response.raise_for_status()  # Raise an exception for HTTP error codes
+    
     return response
