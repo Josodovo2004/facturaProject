@@ -44,6 +44,7 @@ def stringResumenComprobante(data):
             </cac:PartyLegalEntity>
         </cac:Party>
     </cac:AccountingSupplierParty>'''
+    
 
     for i, documento in enumerate(documentos, start=1):
         xml += f'''
