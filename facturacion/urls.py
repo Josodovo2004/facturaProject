@@ -13,6 +13,7 @@ from .views import (
     emitirComprobante,
     anular_factura,
     comunicadoBaja,
+    resumen_diario,
 )
 
 urlpatterns = [
@@ -39,4 +40,5 @@ urlpatterns = [
     path('emitir_comprobante/', emitirComprobante, name='emitircomprobante'),
     path('anular_factura/', anular_factura, name='anular_factura'),
     path('comunicado_baja/', comunicadoBaja, name='comunicado_baja'),
+    path('resumen_diario/', resumen_diario, name='resumen_diario' )
 ]

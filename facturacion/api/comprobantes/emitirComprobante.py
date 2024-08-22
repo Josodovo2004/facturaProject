@@ -8,6 +8,7 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 from datetime import timedelta
 from facturacion.api.zip_and_encode_base64 import zip_and_encode_base64
 from facturacion.api.modify_xml import modify_xml
+from facturacion.api.xml_envio import envio_xml
 import base64
 import io
 import os
@@ -150,59 +151,7 @@ def emitirComprobanteAPI(request):
 
     encodedZip = zip_and_encode_base64(filePath)
 
-    xml_envio =f'''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
-        xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe" 
-        xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
-     <soapenv:Header>
-            <wsse:Security>
-                <wsse:UsernameToken>
-                    <wsse:Username>{emisor.numeroDocumento}{emisor.usuarioSol}</wsse:Username>
-	<wsse:Password>{emisor.claveSol}</wsse:Password>
-                </wsse:UsernameToken>
-           </wsse:Security>
- </soapenv:Header>
- <soapenv:Body>
-	<ser:sendBill>
-		<fileName>{fileName.replace(".xml", ".ZIP")}</fileName>
-		<contentFile>{encodedZip}</contentFile>
-	</ser:sendBill>
- </soapenv:Body>
-</soapenv:Envelope>'''
-    
-        # The web service URL
-    ws = "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
-
-    # Headers
-    headers = {
-        "Content-Type": "text/xml; charset=utf-8",
-        "Accept": "text/xml",
-        "Cache-Control": "no-cache",
-        "Pragma": "no-cache",
-        "SOAPAction": "",
-        "Content-Length": str(len(xml_envio))
-
-    }
-
-    zipData = base64.b64decode(encodedZip)
-
-    with open("decoded_file.zip", "wb") as file:
-        file.write(zipData)
-
-    # SSL verification (use your .pfk file here)
-    certPath = "facturacion/api/certificate/certificado.pfx"  # Replace with your .pfk file path
-
-    # Check if the certificate file exists
-    if not os.path.isfile(certPath):
-        raise FileNotFoundError(f"Certificate file not found: {certPath}")
-
-    # Path to the CA bundle
-    ca_bundle_path = "facturacion/api/certificate/cacert.pem"  # Replace with the path to your cacert.pem file
-
-
-
-    # Send the request
-    response = requests.post(url=ws, data=xml_envio, headers=headers, verify=ca_bundle_path)
-
+    response = envio_xml(comprobante, fileName, encodedZip, tipo=True)
 
     if response.status_code == 200:
         try:

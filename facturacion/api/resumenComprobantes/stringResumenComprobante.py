@@ -1,6 +1,6 @@
+import os
 
-
-def stringResumenComprobante(data):
+def stringResumenComprobante(data, fileName):
 
     cabecera = data['cabecera']
     emisor = data['emisor']
@@ -16,7 +16,7 @@ def stringResumenComprobante(data):
     </ext:UBLExtensions>
     <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
     <cbc:CustomizationID>1.1</cbc:CustomizationID>
-    <cbc:ID>{cabecera['tipo_comprobante']}-{cabecera['serie']}-{cabecera['correlativo']}</cbc:ID>
+    <cbc:ID>{cabecera['tipo_comprobante']}-{str(cabecera['fecha_envio']).replace('-','')}-{cabecera['serie']}</cbc:ID>
     <cbc:ReferenceDate>{cabecera['fecha_referencia']}</cbc:ReferenceDate>
     <cbc:IssueDate>{cabecera['fecha_envio']}</cbc:IssueDate>
     <cac:Signature>
@@ -47,7 +47,21 @@ def stringResumenComprobante(data):
     
 
     for i, documento in enumerate(documentos, start=1):
-        xml += f'''
+        taxSubtotal = ''
+        for tax in documento['tax']:
+            taxSubtotal += f'''
+            <cac:TaxSubtotal>
+                    <cbc:TaxAmount currencyID="{documento['currency']}">{tax['tax_amount']}</cbc:TaxAmount>
+                    <cac:TaxCategory>
+                        <cac:TaxScheme>
+                            <cbc:ID>{tax['id']}</cbc:ID>
+                            <cbc:Name>{tax['name']}</cbc:Name>
+                            <cbc:TaxTypeCode>{tax['tax_type_code']}</cbc:TaxTypeCode>
+                        </cac:TaxScheme>
+                    </cac:TaxCategory>
+                </cac:TaxSubtotal>
+'''
+            xml += f'''
         <sac:SummaryDocumentsLine>
             <cbc:LineID>{i}</cbc:LineID>
             <cbc:DocumentTypeCode>{documento['document_type_code']}</cbc:DocumentTypeCode>
@@ -62,18 +76,18 @@ def stringResumenComprobante(data):
             </sac:BillingPayment>
             <cac:TaxTotal>
                 <cbc:TaxAmount currencyID="{documento['currency']}">{documento['tax_amount']}</cbc:TaxAmount>
-                <cac:TaxSubtotal>
-                    <cbc:TaxAmount currencyID="{documento['currency']}">{documento['tax_amount']}</cbc:TaxAmount>
-                    <cac:TaxCategory>
-                        <cac:TaxScheme>
-                            <cbc:ID>{documento['tax_scheme']['id']}</cbc:ID>
-                            <cbc:Name>{documento['tax_scheme']['name']}</cbc:Name>
-                            <cbc:TaxTypeCode>{documento['tax_scheme']['tax_type_code']}</cbc:TaxTypeCode>
-                        </cac:TaxScheme>
-                    </cac:TaxCategory>
-                </cac:TaxSubtotal>
+                {taxSubtotal}
             </cac:TaxTotal>
         </sac:SummaryDocumentsLine>'''
 
     xml += '''
     </SummaryDocuments>'''
+
+    folder_path = f"xml/{fileName.replace('.xml', '')}"
+
+    os.makedirs(folder_path, exist_ok=True)
+
+    with open(f'{folder_path}/{fileName}', 'w', encoding='utf-8') as file:
+        file.write(xml)
+
+    return f'{folder_path}/{fileName}'
