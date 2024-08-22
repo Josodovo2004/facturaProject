@@ -6,9 +6,9 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import pkcs12
 from datetime import timedelta, date
 from facturacion.api.consultarTicket import consultarTicket
-from facturacion.xml_envio import envio_xml
-from facturacion.zip_and_encode_base64 import zip_and_encode_base64
-from facturacion.modify_xml import modify_xml
+from facturacion.api.xml_envio import envio_xml
+from facturacion.api.zip_and_encode_base64 import zip_and_encode_base64
+from facturacion.api.modify_xml import modify_xml
 import io
 import zipfile
 import base64

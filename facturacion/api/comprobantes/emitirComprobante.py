@@ -6,8 +6,8 @@ from facturacion.api.comprobantes.dxmlFromString import dxmlFromString
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.serialization import pkcs12
 from datetime import timedelta
-from facturacion.zip_and_encode_base64 import zip_and_encode_base64
-from facturacion.modify_xml import modify_xml
+from facturacion.api.zip_and_encode_base64 import zip_and_encode_base64
+from facturacion.api.modify_xml import modify_xml
 import base64
 import io
 import os
