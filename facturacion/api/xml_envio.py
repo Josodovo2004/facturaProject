@@ -1,4 +1,5 @@
 import requests
+import environ
 
 def envio_xml(comprobante, fileName, encodedZip, tipo=True):
     ca_bundle_path = "facturacion/api/certificate/cacert.pem"  # Replace with the path to your cacert.pem file
