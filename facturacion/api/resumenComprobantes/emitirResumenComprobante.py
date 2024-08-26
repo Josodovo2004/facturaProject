@@ -8,45 +8,11 @@ from facturacion.api.modify_xml import modify_xml
 import base64
 import os
 import zipfile
+import json
 
 def emitirResumenComprobante(request):
 
-
-
-    data = {
-    'cabecera': {
-        'tipo_comprobante': 'RC',  # Tipo de comprobante: "RC" para Resumen de Boletas
-        'serie': '001',             # Serie del resumen diario
-        'correlativo': '00001',     # Correlativo del resumen diario
-        'fecha_referencia': '2024-08-20',  # Fecha de emisión de las boletas
-        'fecha_envio': '2024-08-21',       # Fecha de envío del resumen diario
-    },
-    'emisor': {
-        'ruc': '20123456789',             # RUC del emisor
-        'razon_social': 'Empresa S.A.C.', # Razón social del emisor
-    },
-    'documentos': [
-        {
-            'document_type_code': '03',        # Tipo de documento (03 para Boletas)
-            'id': 'B001-00000001',             # ID del documento (Serie y número)
-            'condition_code': '1',             # Código de condición (1 para documento emitido, 2 para anulado)
-            'currency': 'PEN',                 # Moneda
-            'total_amount': '100.00',          # Importe total
-            'paid_amount': '82.00',           # Importe pagado
-            'instruction_id': '01',            # Instrucción (01 para pago total)
-            'tax_amount': '18.00',             # Importe total de impuestos
-            'tax': [                           # Detalle de los impuestos
-                {
-                    'tax_amount': '18.00',          # Importe del impuesto
-                    'id': '1000',                   # ID del impuesto (1000 para IGV)
-                    'name': 'IGV',                  # Nombre del impuesto
-                    'tax_type_code': 'VAT',         # Código del tipo de impuesto (VAT para IGV)
-                },
-            ],
-        },
-        # Se pueden agregar más documentos siguiendo esta estructura
-    ],
-}
+    data = json.loads(request.body)
     
     fileName = f"{data['emisor']['ruc']}-RC-{str(data['cabecera']['fecha_envio']).replace('-','')}-001.xml"
 
