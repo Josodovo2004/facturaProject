@@ -16,11 +16,7 @@ def emitirNotaCredito(request):
     data = json.loads(request.body)
     
     emisorDict = data['emisor']
-    adquirienteDict = data['adquiriente']
     comprobanteDict = data['comprobante']
-    itemsDict = data['Items']
-    taxesDict = data['taxes']
-    referencia = data['documentoRelacionado']
     
     # Generate the file name based on the emisor and comprobante data
     fileName = f'{emisorDict["DocumentoEmisor"]}-07-{comprobanteDict["serieDocumento"]}-{comprobanteDict["numeroDocumento"]}.xml'
