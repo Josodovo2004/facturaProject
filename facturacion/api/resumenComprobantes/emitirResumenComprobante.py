@@ -7,7 +7,6 @@ from facturacion.api.xml_envio import envio_xml
 from facturacion.api.modify_xml import modify_xml
 import base64
 import os
-from facturacion.models import Comprobante
 import zipfile
 
 def emitirResumenComprobante(request):
@@ -57,10 +56,8 @@ def emitirResumenComprobante(request):
 
     encodedZip = zip_and_encode_base64(filePath)
 
-    comprobante = Comprobante.objects.filter(id=1).first()
-
     #obtener la respuesta de sunat
-    response = envio_xml(comprobante, fileName, encodedZip, False)
+    response = envio_xml(fileName, encodedZip, False)
 
     zipData = base64.b64decode(encodedZip)
 
@@ -88,7 +85,7 @@ def emitirResumenComprobante(request):
         print(response.content)
         return JsonResponse({'response' : "Problema de conexion"})
     
-    response = consultarTicket(comprobante, ticket)
+    response = consultarTicket(ticket)
     status_code = response.status_code
 
     carpetacdr = f'cdr/{str(fileName).replace('.xml','')}'

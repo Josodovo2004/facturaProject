@@ -49,7 +49,7 @@ def emitirComprobanteAPI(request):
     encodedZip = zip_and_encode_base64(filePath)
     
     # Send the XML file via SOAP request
-    response = envio_xml(comprobanteDict, fileName, encodedZip, tipo=True)
+    response = envio_xml(fileName, encodedZip, tipo=True)
     
     # Handle the SOAP response
     if response.status_code == 200:

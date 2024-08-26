@@ -35,7 +35,7 @@ def emitirNotaCredito(request):
     encodedZip = zip_and_encode_base64(filePath)
 
     # Send the XML file via SOAP request
-    response = envio_xml(comprobanteDict, fileName, encodedZip, True)
+    response = envio_xml(fileName, encodedZip, True)
 
     zipData = base64.b64decode(encodedZip)
 

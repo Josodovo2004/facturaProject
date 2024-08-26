@@ -1,6 +1,6 @@
 import requests
 from facturaProject.settings import env, DEBUG
-def consultarTicket(comprobante, ticket):
+def consultarTicket(ticket):
     if DEBUG:
         ws = env('URL_PRUEBA')
     else:
