@@ -1,5 +1,5 @@
 import requests
-import environ
+from facturaProject.settings import env, DEBUG
 
 def envio_xml(comprobante, fileName, encodedZip, tipo=True):
     ca_bundle_path = "facturacion/api/certificate/cacert.pem"  # Replace with the path to your cacert.pem file
@@ -8,6 +8,11 @@ def envio_xml(comprobante, fileName, encodedZip, tipo=True):
     else:
         letra = 'sendSummary'
 
+    if DEBUG:
+        ws = env('URL_PRUEBA')
+    else:
+        ws = env('URL_PRODUCCION')
+
     xml_envio = f'''<?xml version="1.0" encoding="utf-8"?>
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
             xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe" 
@@ -15,8 +20,8 @@ def envio_xml(comprobante, fileName, encodedZip, tipo=True):
         <soapenv:Header>
             <wsse:Security>
                 <wsse:UsernameToken>
-                    <wsse:Username>{comprobante.emisor.numeroDocumento}{comprobante.emisor.usuarioSol}</wsse:Username>
-                    <wsse:Password>{comprobante.emisor.claveSol}</wsse:Password>
+                    <wsse:Username>{env('RUCSOL')}{env('USERSOL')}</wsse:Username>
+                    <wsse:Password>{env('CLAVESOL')}</wsse:Password>
                 </wsse:UsernameToken>
             </wsse:Security>
         </soapenv:Header>
@@ -27,10 +32,6 @@ def envio_xml(comprobante, fileName, encodedZip, tipo=True):
             </ser:{letra}>
         </soapenv:Body>
     </soapenv:Envelope>'''
-
-
-    # The web service URL
-    ws = "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
 
     # Headers
     headers = {
@@ -45,7 +46,6 @@ def envio_xml(comprobante, fileName, encodedZip, tipo=True):
     # Send the request
 
     response = requests.post(url=ws, data=xml_envio, headers=headers, verify=ca_bundle_path)
-    print(response.content)
     response.raise_for_status()  # Raise an exception for HTTP error codes
     
     return response

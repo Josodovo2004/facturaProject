@@ -37,7 +37,7 @@ urlpatterns = [
     path('comprobante-items/', ComprobanteItemListCreateView.as_view(), name='comprobante-item-list-create'),
     path('comprobante-items/<int:pk>/', ComprobanteItemRetrieveUpdateDestroyView.as_view(), name='comprobante-item-retrieve-update-destroy'),
     
-    path('emitir_comprobante/', emitirComprobante, name='emitircomprobante'),
+    path('emitir_comprobante/', emitirComprobante, name='emitir_comprobante'),
     path('anular_factura/', anular_factura, name='anular_factura'),
     path('comunicado_baja/', comunicadoBaja, name='comunicado_baja'),
     path('resumen_diario/', resumen_diario, name='resumen_diario' )

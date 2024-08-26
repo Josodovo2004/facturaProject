@@ -114,7 +114,6 @@ def emitirResumenComprobante(request):
                 cdr_content = cdr_file.read()   
 
             doc_cdr = ET.fromstring(cdr_content.encode('utf-8'))
-            print(cdr_content)
 
             response_code = doc_cdr.find('.//{*}ResponseCode').text
 

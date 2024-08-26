@@ -1,5 +1,10 @@
 import requests
+from facturaProject.settings import env, DEBUG
 def consultarTicket(comprobante, ticket):
+    if DEBUG:
+        ws = env('URL_PRUEBA')
+    else:
+        ws = env('URL_PRODUCCION')
 
     xml_envio = f'''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
             xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe"
@@ -7,8 +12,8 @@ def consultarTicket(comprobante, ticket):
         <soapenv:Header>
                 <wsse:Security>
                     <wsse:UsernameToken>
-                        <wsse:Username>{comprobante.emisor.numeroDocumento}{comprobante.emisor.usuarioSol}</wsse:Username>
-                        <wsse:Password>{comprobante.emisor.claveSol}</wsse:Password>
+                        <wsse:Username>{env('RUCSOL')}{env('USERSOL')}</wsse:Username>
+                        <wsse:Password>{env('CLAVESOL')}</wsse:Password>
                     </wsse:UsernameToken>
                 </wsse:Security>
         </soapenv:Header>
@@ -28,8 +33,6 @@ def consultarTicket(comprobante, ticket):
         "Content-Length": str(len(xml_envio))
 
     }
-
-    ws = "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
 
     response = requests.post(ws, data=xml_envio, headers=headers, verify=True)
 
