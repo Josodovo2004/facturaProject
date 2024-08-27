@@ -9,6 +9,7 @@ from datetime import timedelta
 from facturacion.api.zip_and_encode_base64 import zip_and_encode_base64
 from facturacion.api.modify_xml import modify_xml
 from facturacion.api.xml_envio import envio_xml
+from facturacion.api.exctractHashCode import extract_digest_value
 import base64
 import io
 import os
@@ -85,7 +86,8 @@ def emitirComprobanteAPI(request):
 
                                 # Return a success message as a JSON response
                                 if response_code == '0':
-                                    return JsonResponse({'message': 'Comprobante aceptado'})
+                                    hashCode = extract_digest_value(filePath)
+                                    return JsonResponse({'message': 'Comprobante aceptado', 'hash_code': str(hashCode)})
                                 else:
                                     return JsonResponse({'error': f'{response_code}', 'descripcion': f'{description}'})
                         except zipfile.BadZipFile:
