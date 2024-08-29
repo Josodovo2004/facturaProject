@@ -6,6 +6,7 @@ def dxmlFromString(data, fileName : str):
     adquiriente =  data["adquiriente"]
     taxes = data["taxes"]
     items = data["Items"]
+    payTerms = data["payTerms"]
 
 
     signature = f'''<?xml version="1.0" encoding="utf-8"?>
@@ -137,11 +138,33 @@ def dxmlFromString(data, fileName : str):
             </cac:PartyLegalEntity>
         </cac:Party>
     </cac:AccountingCustomerParty>'''
-
-    paymentTerms =  '''<cac:PaymentTerms>
-        <cbc:ID>FormaPago</cbc:ID>
-        <cbc:PaymentMeansID>Contado</cbc:PaymentMeansID>
-    </cac:PaymentTerms> '''
+    
+    paymentTerms = ''
+    #credito o contado
+    i = 1
+    for value in payTerms:
+        if value['metodo'] == 'contado':
+            paymentTerms += f'''<cac:PaymentTerms>
+                <cbc:ID>FormaPago</cbc:ID>
+                <cbc:PaymentMeansID>{value['metodo']}</cbc:PaymentMeansID>
+            </cac:PaymentTerms> '''
+            break
+        else:
+            paymentTerms +=  f'''<cac:PaymentTerms>
+                    <cbc:ID>FormaPago</cbc:ID>
+                    <cbc:PaymentMeansID>{value['metodo']}</cbc:PaymentMeansID>
+                    <cbc:Amount currencyID="PEN">{value['monto']}</cbc:Amount>
+                </cac:PaymentTerms> '''
+            if len(paymentTerms) > 1:
+                paymentTerms +=  f'''<cac:PaymentTerms>
+                    <cbc:ID>FormaPago</cbc:ID>
+                    <cbc:PaymentMeansID>Cuota{i}</cbc:PaymentMeansID>
+                    <cbc:Amount currencyID="PEN">{value['monto']}</cbc:Amount>
+                    <cbc:PaymentDueDate>{value['fecha_limite']}</cbc:PaymentDueDate>
+                </cac:PaymentTerms> '''
+                i+=1
+            else:
+                break
 
     
     taxSubtotal = ''
@@ -160,6 +183,7 @@ def dxmlFromString(data, fileName : str):
             </cac:TaxCategory>
         </cac:TaxSubtotal> '''  
          
+
     taxTotal = f'''   
     <cac:TaxTotal>
         <cbc:TaxAmount currencyID="PEN">{comprobante["MontoTotalImpuestos"]}</cbc:TaxAmount>
