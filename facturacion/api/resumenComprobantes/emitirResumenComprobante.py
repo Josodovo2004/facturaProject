@@ -54,14 +54,14 @@ def emitirResumenComprobante(request):
     response = consultarTicket(ticket)
     status_code = response.status_code
 
-    carpetacdr = f'cdr/{str(fileName).replace('.xml','')}'
+    carpetacdr = f"cdr/{str(fileName).replace('.xml','')}"
 
     if status_code == 200:
         doc = ET.fromstring(response.content)
         content_element = doc.find('.//{*}content')
         if content_element is not None and content_element.text:
             cdr = base64.b64decode(content_element.text)
-            cdr_path = os.path.join(carpetacdr, f"R-{fileName.replace(".xml", ".ZIP")}")
+            cdr_path = os.path.join(carpetacdr, f'R-{fileName.replace(".xml", ".ZIP")}')
             os.makedirs(carpetacdr, exist_ok=True)
             with open(cdr_path, 'wb') as f:
                 f.write(cdr)

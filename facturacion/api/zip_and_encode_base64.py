@@ -3,7 +3,7 @@ import os, zipfile, base64
 
 def zip_and_encode_base64(xml_file_path: str):
     nombrexml = xml_file_path.split('/')[-1]  # Extract the XML file name from the path
-    carpetaxml = f'xml/{nombrexml.replace('.xml', '')}'  # Path to the directory containing the XML file
+    carpetaxml = f"xml/{nombrexml.replace('.xml', '')}"  # Path to the directory containing the XML file
     rutaxml = os.path.join(carpetaxml, nombrexml)
     nombrezip = nombrexml.replace('.xml', '.zip')
     # Ensure the folder exists
