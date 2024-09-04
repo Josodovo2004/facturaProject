@@ -2,7 +2,7 @@ from lxml import etree as ET
 import xmlsec
 from django.http import JsonResponse
 from facturacion.api.getpfx import extract_pfx_details
-from facturacion.api.comprobantes.dxmlFromString import dxmlFromString
+from facturacion.api.guiaRemision.guiaRemisionString import crear_xml_guia_remision
 from cryptography.hazmat.primitives.serialization import pkcs12
 from facturacion.api.zip_and_encode_base64 import zip_and_encode_base64
 from facturacion.api.modify_xml import modify_xml
@@ -17,7 +17,7 @@ import json
 import socket
 from requests.exceptions import RequestException, HTTPError, ConnectionError, Timeout
 
-def emitirComprobanteAPI(request):
+def emitirGuiaRemision(request):
     try:
         # Parse JSON data from request body
         data = json.loads(request.body)
@@ -26,10 +26,10 @@ def emitirComprobanteAPI(request):
         comprobanteDict = data['comprobante']
         
         # Generate file name
-        fileName = f'{emisorDict["DocumentoEmisor"]}-{comprobanteDict["tipoComprobante"]}-{comprobanteDict["serieDocumento"]}-{comprobanteDict["numeroDocumento"]}.xml'
+        fileName = f'{emisorDict["DocumentoEmisor"]}-09-{comprobanteDict["serieDocumento"]}-{comprobanteDict["numeroDocumento"]}.xml'
         
         # Construct the XML file path
-        filePath = dxmlFromString(data, fileName)        
+        filePath = crear_xml_guia_remision(data, fileName)        
         # Modify XML (if necessary)
         modify_xml(filePath)
         
@@ -81,7 +81,7 @@ def emitirComprobanteAPI(request):
                                 # Return a success message as a JSON response
                                 if response_code == '0':
                                     hashCode = extract_digest_value(filePath)
-                                    return JsonResponse({'message': 'Comprobante aceptado', 'hash_code': str(hashCode)})
+                                    return JsonResponse({'message': 'Guia de Remision aceptada', 'hash_code': str(hashCode)})
                                 else:
                                     return JsonResponse({'error': f'{response_code}', 'descripcion': f'{description}'})
                         except zipfile.BadZipFile:

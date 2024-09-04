@@ -91,8 +91,8 @@ DATABASES = {
     }
 }
 
-certificado = 'facturacion\api\certificate\certificado.p12'
-cacert = 'facturacion\api\certificate\cacert.pem'
+certificado = r'facturacion\api\certificate\certificado.p12'
+cacert = r'facturacion\api\certificate\cacert.pem'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

@@ -27,9 +27,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -91,8 +91,8 @@ DATABASES = {
     }
 }
 
-certificado = 'facturacion\api\certificate\certificado.p12'
-cacert = 'facturacion\api\certificate\cacert.pem'
+certificado = r'facturacion\api\certificate\certificado.p12'
+cacert = r'facturacion\api\certificate\cacert.pem'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

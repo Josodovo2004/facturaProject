@@ -1,8 +1,9 @@
 import requests
-from facturaProject.settings import env, DEBUG
+from facturaProject.settings import env, DEBUG, cacert
+
 
 def envio_xml(fileName, encodedZip, tipo=True):
-    ca_bundle_path = "facturacion/api/certificate/cacert.pem"  # Replace with the path to your cacert.pem file
+    ca_bundle_path = cacert  # Replace with the path to your cacert.pem file
     if tipo:
         letra = 'sendBill'
     else:

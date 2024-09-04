@@ -3,11 +3,12 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 from cryptography.hazmat.primitives import serialization
 import base64
 from lxml import etree as ET
+from facturaProject.settings import certificado, cacert
 
 def modify_xml(file_path):
     try:
-        pfx_path = "facturacion/api/certificate/certificado.pfx"  # Replace with your .pfx file path
-        pfx_password = b'Jose_d@vid2004'  # Replace with your .pfx password
+        pfx_path = certificado  # Replace with your .pfx file path
+        pfx_password = b'ovenneclu2024'  # Replace with your .pfx password
 
         with open(pfx_path, "rb") as pfx_file:
             pfx_data = pfx_file.read()

@@ -98,47 +98,63 @@ def dxmlFromString(data, fileName : str):
         </cac:Party>
     </cac:AccountingSupplierParty>
     '''
-    compradorData = f'''<cac:AccountingCustomerParty>
-        <cac:Party>
-            <cac:PartyIdentification>
-                <cbc:ID schemeID="{adquiriente["TipoDocumentoAdquiriente"]}" schemeName="Documento de Identidad" 
-                        schemeAgencyName="PE:SUNAT" 
-                        schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">{adquiriente["NumeroDocumentoAdquiriente"]}</cbc:ID>
-            </cac:PartyIdentification>
-            <cac:PartyName>
-                <cbc:Name><![CDATA[{adquiriente["razonSocial"]}]]></cbc:Name>
-            </cac:PartyName>
-            <cac:PartyTaxScheme>
-                <cbc:RegistrationName><![CDATA[{adquiriente["razonSocial"]}]]></cbc:RegistrationName>
-                <cbc:CompanyID schemeID="{adquiriente["TipoDocumentoAdquiriente"]}" schemeName="SUNAT:Identificador de Documento de Identidad" 
-                               schemeAgencyName="PE:SUNAT" 
-                               schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">{adquiriente["NumeroDocumentoAdquiriente"]}</cbc:CompanyID>
-                <cac:TaxScheme>
-                    <cbc:ID schemeID="{adquiriente["TipoDocumentoAdquiriente"]}" schemeName="SUNAT:Identificador de Documento de Identidad" 
+
+    print('1')
+    if adquiriente.get("NumeroDocumentoAdquiriente"):
+        compradorData = f'''<cac:AccountingCustomerParty>
+            <cac:Party>
+                <cac:PartyIdentification>
+                    <cbc:ID schemeID="{adquiriente["TipoDocumentoAdquiriente"]}" schemeName="Documento de Identidad" 
                             schemeAgencyName="PE:SUNAT" 
                             schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">{adquiriente["NumeroDocumentoAdquiriente"]}</cbc:ID>
-                </cac:TaxScheme>
-            </cac:PartyTaxScheme>
-            <cac:PartyLegalEntity>
-                <cbc:RegistrationName><![CDATA[{adquiriente["razonSocial"]}]]></cbc:RegistrationName>
-                <cac:RegistrationAddress>
-                    <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI"/>
-                    <cbc:CityName><![CDATA[]]></cbc:CityName>
-                    <cbc:CountrySubentity><![CDATA[]]></cbc:CountrySubentity>
-                    <cbc:District><![CDATA[]]></cbc:District>
-                    <cac:AddressLine>
-                        <cbc:Line><![CDATA[{adquiriente['CalleComprador']} - {adquiriente['distritoComprador']} - {adquiriente['provinciaComprador']} - {adquiriente['departamentoComprador']}]]></cbc:Line>
-                    </cac:AddressLine>                                        
-                    <cac:Country>
-                        <cbc:IdentificationCode listID="ISO 3166-1" 
-                                                listAgencyName="United Nations Economic Commission for Europe" 
-                                                listName="Country"/>
-                    </cac:Country>
-                </cac:RegistrationAddress>
-            </cac:PartyLegalEntity>
-        </cac:Party>
-    </cac:AccountingCustomerParty>'''
-    
+                </cac:PartyIdentification>
+                <cac:PartyName>
+                    <cbc:Name><![CDATA[{adquiriente["razonSocial"]}]]></cbc:Name>
+                </cac:PartyName>
+                <cac:PartyTaxScheme>
+                    <cbc:RegistrationName><![CDATA[{adquiriente["razonSocial"]}]]></cbc:RegistrationName>
+                    <cbc:CompanyID schemeID="{adquiriente["TipoDocumentoAdquiriente"]}" schemeName="SUNAT:Identificador de Documento de Identidad" 
+                                schemeAgencyName="PE:SUNAT" 
+                                schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">{adquiriente["NumeroDocumentoAdquiriente"]}</cbc:CompanyID>
+                    <cac:TaxScheme>
+                        <cbc:ID schemeID="{adquiriente["TipoDocumentoAdquiriente"]}" schemeName="SUNAT:Identificador de Documento de Identidad" 
+                                schemeAgencyName="PE:SUNAT" 
+                                schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">{adquiriente["NumeroDocumentoAdquiriente"]}</cbc:ID>
+                    </cac:TaxScheme>
+                </cac:PartyTaxScheme>
+                <cac:PartyLegalEntity>
+                    <cbc:RegistrationName><![CDATA[{adquiriente["razonSocial"]}]]></cbc:RegistrationName>
+                    <cac:RegistrationAddress>
+                        <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI"/>
+                        <cbc:CityName><![CDATA[]]></cbc:CityName>
+                        <cbc:CountrySubentity><![CDATA[]]></cbc:CountrySubentity>
+                        <cbc:District><![CDATA[]]></cbc:District>
+                        <cac:AddressLine>
+                            <cbc:Line><![CDATA[{adquiriente['CalleComprador']} - {adquiriente['distritoComprador']} - {adquiriente['provinciaComprador']} - {adquiriente['departamentoComprador']}]]></cbc:Line>
+                        </cac:AddressLine>                                        
+                        <cac:Country>
+                            <cbc:IdentificationCode listID="ISO 3166-1" 
+                                                    listAgencyName="United Nations Economic Commission for Europe" 
+                                                    listName="Country"/>
+                        </cac:Country>
+                    </cac:RegistrationAddress>
+                </cac:PartyLegalEntity>
+            </cac:Party>
+        </cac:AccountingCustomerParty>'''
+    else:
+        compradorData = f'''<cac:AccountingCustomerParty>
+            <cac:Party>
+                <cac:PartyIdentification>
+															
+				<cbc:ID schemeAgencyName="PE:SUNAT" schemeID="-" schemeName="Documento de Identidad" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">-</cbc:ID>
+			</cac:PartyIdentification>
+                <cac:PartyLegalEntity>
+                    <cbc:RegistrationName><![CDATA[{adquiriente["razonSocial"]}]]></cbc:RegistrationName>
+                </cac:PartyLegalEntity>
+            </cac:Party>
+        </cac:AccountingCustomerParty>'''
+
+    print('1')
     paymentTerms = ''
     #credito o contado
     i = 1
@@ -166,7 +182,7 @@ def dxmlFromString(data, fileName : str):
             else:
                 break
 
-    
+    print('1')
     taxSubtotal = ''
     for tax in taxes.values():
          taxSubtotal += f'''<cac:TaxSubtotal>
@@ -197,13 +213,12 @@ def dxmlFromString(data, fileName : str):
         <cbc:TaxInclusiveAmount currencyID="PEN">{comprobante["totalConImpuestos"]}</cbc:TaxInclusiveAmount>
         <cbc:PayableAmount currencyID="PEN">{comprobante["totalConImpuestos"]}</cbc:PayableAmount>
     </cac:LegalMonetaryTotal>'''
-
+    print('1')
     thing = ''
     innerId = 1
     for item in items:
         itemTaxSubtotal = ''
         for tax in item["tax"].values():
-            print('a')
             itemTaxSubtotal += f'''<cac:TaxSubtotal>
                 <cbc:TaxableAmount currencyID="PEN">{tax["operacionesGravadas"]}</cbc:TaxableAmount>
                 <cbc:TaxAmount currencyID="PEN">{tax["MontoTotalImpuesto"]}</cbc:TaxAmount>
@@ -213,7 +228,7 @@ def dxmlFromString(data, fileName : str):
                     <cbc:Percent>18</cbc:Percent>
                     <cbc:TaxExemptionReasonCode listAgencyName="PE:SUNAT" 
                                                 listName="Afectacion del IGV" 
-                                                listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">10</cbc:TaxExemptionReasonCode>
+                                                listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">20</cbc:TaxExemptionReasonCode>
                     <cac:TaxScheme>
                         <cbc:ID schemeID="UN/ECE 5153" schemeName="Codigo de tributos" 
                                 schemeAgencyName="PE:SUNAT">{tax["cod1"]}</cbc:ID>
@@ -259,6 +274,7 @@ def dxmlFromString(data, fileName : str):
         innerId+=1
         thing += newItem
 
+    print('1')
     xml_invoice = signature + emisordata + compradorData + paymentTerms + taxTotal + legalMonetaryTotal + thing + '</Invoice>'
 
     # Extract the folder path
