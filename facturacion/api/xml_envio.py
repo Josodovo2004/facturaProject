@@ -8,10 +8,10 @@ def envio_xml(fileName, encodedZip, tipo=True):
         letra = 'sendBill'
     else:
         letra = 'sendSummary'
-
-
-    ws = env('URL_PRUEBA')
-
+    if DEBUG:
+        ws = env('URL_PRUEBA')
+    else:
+        ws = env('URL_PRODUCCION')
 
     xml_envio = f'''<?xml version="1.0" encoding="utf-8"?>
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 

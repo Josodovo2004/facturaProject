@@ -92,6 +92,7 @@ DATABASES = {
 }
 
 certificado = r'facturacion\api\certificate\certificado.p12'
+certificadoPassword = env('PASSWORDp12')
 cacert = r'facturacion\api\certificate\cacert.pem'
 
 # Password validation
@@ -142,3 +143,14 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
+
+CELERY_TIMEZONE = 'America/Lima'
+CELERY_ENABLE_UTC = False
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BROKER_URL = 'memory://'  # Use an in-memory broker for testing
+CELERY_RESULT_BACKEND = 'cache'  # Use cache as the result backend for testing
+CELERY_CACHE_BACKEND = 'memory'

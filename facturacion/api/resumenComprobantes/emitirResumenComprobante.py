@@ -84,7 +84,7 @@ def emitirResumenComprobante(request):
                 return JsonResponse({'response' : "RESUMEN DE COMPROBANTES APROBADO"})
             else:
                 print(doc_cdr.find('.//{*}Description').text)
-                return  JsonResponse({'response' :f"RESUMEN DE COMPROBANTES RECHAZADO CON CODIGO DE ERROR: {response_code}"})
+                return  JsonResponse({'response' :f"RESUMEN DE COMPROBANTES RECHAZADO CON CODIGO DE ERROR: {response_code}"}, status_code=200)
 
                 
 
