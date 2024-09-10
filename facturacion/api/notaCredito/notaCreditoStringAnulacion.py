@@ -34,8 +34,8 @@ def stringNotaCreditoAnulacion(data, fileName):
     <cac:DiscrepancyResponse>
         <cbc:ReferenceID>{documentoRelacionado["serieDocumento"]}-{documentoRelacionado["numeroDocumento"]}</cbc:ReferenceID>
         <cbc:ResponseCode listAgencyName="PE:SUNAT" 
-                          listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo09">01</cbc:ResponseCode>
-        <cbc:Description><![CDATA[Anulación de la operación]]></cbc:Description>
+                          listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo09">{data['responseCode']}</cbc:ResponseCode>
+        <cbc:Description><![CDATA[{data['descripcion']}]]></cbc:Description>
     </cac:DiscrepancyResponse>
 
     <cac:BillingReference>
@@ -46,6 +46,7 @@ def stringNotaCreditoAnulacion(data, fileName):
                                   listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">{documentoRelacionado["tipoComprobante"]}</cbc:DocumentTypeCode>
         </cac:InvoiceDocumentReference>
     </cac:BillingReference>
+    
     <cac:Signature>
         <cbc:ID>{comprobante["serieDocumento"]}-{comprobante["numeroDocumento"]}</cbc:ID>
         <cac:SignatoryParty>
