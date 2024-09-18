@@ -8,6 +8,8 @@ def envio_xml(fileName, encodedZip, tipo=True):
         letra = 'sendBill'
     else:
         letra = 'sendSummary'
+
+
     if DEBUG:
         ws = env('URL_PRUEBA')
     else:

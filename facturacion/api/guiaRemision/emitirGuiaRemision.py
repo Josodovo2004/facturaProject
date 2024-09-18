@@ -1,21 +1,15 @@
 from lxml import etree as ET
-import xmlsec
 from django.http import JsonResponse
-from facturacion.api.getpfx import extract_pfx_details
 from facturacion.api.guiaRemision.guiaRemisionString import crear_xml_guia_remision
-from cryptography.hazmat.primitives.serialization import pkcs12
 from facturacion.api.zip_and_encode_base64 import zip_and_encode_base64
 from facturacion.api.modify_xml import modify_xml
 from facturacion.api.xml_envio import envio_xml
 from facturacion.api.exctractHashCode import extract_digest_value
 import base64
 import io
-import os
-import requests
 import zipfile
 import json
-import socket
-from requests.exceptions import RequestException, HTTPError, ConnectionError, Timeout
+from requests.exceptions import HTTPError, ConnectionError, Timeout
 
 def emitirGuiaRemision(request):
     try:

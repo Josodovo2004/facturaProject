@@ -1,15 +1,14 @@
-from rest_framework import generics
-from django.http import response
-from django.views.decorators.csrf import csrf_exempt
+
 
 from .api.comprobantes.emitirComprobante import emitirComprobanteAPI
 from .api.notaCredito.emitirNotaCredito import emitirNotaCredito
 from .api.resumenComprobantes.emitirResumenComprobante import emitirResumenComprobante
+from .api.notaDebito.emitirNotaDebito import emitirNotaDedito
 from .api.guiaRemision.emitirGuiaRemision import emitirGuiaRemision
+from .api.comunicadoDeBajas.emitirComunicadoBajas import emitirComunicadoBajas
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.decorators import api_view
-from rest_framework import serializers
 from drf_yasg.utils import swagger_auto_schema
 
 # CRUD views for Entidad
@@ -241,10 +240,12 @@ def emitirComprobante(request):
     responses={200: openapi.Response(description="Nota de Crédito emitida correctamente")}
 )
 @api_view(['POST'])
-def anular_factura(request):
+def emitirNota_Credito(request):
     return emitirNotaCredito(request)
 
-
+@api_view(['POST'])
+def emitirNota_Debito(request):
+    return emitirNotaDedito(request)
 
 
 @swagger_auto_schema(
@@ -330,7 +331,7 @@ def anular_factura(request):
     }
 )
 @api_view(['POST'])
-def resumen_diario(request):
+def emitir_resumen_diario(request):
     return emitirResumenComprobante(request)
 
 @swagger_auto_schema(
@@ -431,3 +432,8 @@ def resumen_diario(request):
 @api_view(['POST'])
 def emitir_guia_remision(request):
     return emitirGuiaRemision(request)
+
+
+@api_view(['POST'])
+def emitir_comunicado_de_bajas(request):
+    return emitirComunicadoBajas(request)

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'facturacion.apps.FacturacionConfig',
     'rest_framework',
     'drf_yasg',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -137,20 +138,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 
-CELERY_TIMEZONE = 'America/Lima'
-CELERY_ENABLE_UTC = False
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_BROKER_URL = 'memory://'  # Use an in-memory broker for testing
-CELERY_RESULT_BACKEND = 'cache'  # Use cache as the result backend for testing
-CELERY_CACHE_BACKEND = 'memory'
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'SIGNING_KEY': env('SHARED_SECRET_KEY'),  # The shared secret key across services
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Adjust as necessary
+}

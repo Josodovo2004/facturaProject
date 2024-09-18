@@ -1,5 +1,4 @@
 from lxml import etree as ET
-import xmlsec
 from django.http import JsonResponse
 from facturacion.api.zip_and_encode_base64 import zip_and_encode_base64
 from facturacion.api.modify_xml import modify_xml
@@ -8,7 +7,6 @@ import base64
 import io
 import zipfile
 import json
-from datetime import timedelta
 from .notaCreditoStringAnulacion import stringNotaCreditoAnulacion
 
 def emitirNotaCredito(request):

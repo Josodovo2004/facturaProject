@@ -1,6 +1,6 @@
 import os
 
-def stringNotaCredito(data, fileName):
+def stringNotaDebito(data, fileName):
 
     comprobante = data["comprobante"]
     emisor = data["emisor"]
@@ -10,7 +10,7 @@ def stringNotaCredito(data, fileName):
     documentoRelacionado = data["documentoRelacionado"]
 
     signature = f'''<?xml version="1.0" encoding="utf-8"?>
-<CreditNote xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<DebitNote xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
          xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" 
          xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" 
@@ -19,7 +19,7 @@ def stringNotaCredito(data, fileName):
          xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" 
          xmlns:qdt="urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2" 
          xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2" 
-         xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2">
+         xmlns="urn:oasis:names:specification:ubl:schema:xsd:DebitNote-2">
     <ext:UBLExtensions>
         <ext:UBLExtension>
             <ext:ExtensionContent/>
@@ -34,7 +34,7 @@ def stringNotaCredito(data, fileName):
     <cac:DiscrepancyResponse>
         <cbc:ReferenceID>{documentoRelacionado["serieDocumento"]}-{documentoRelacionado["numeroDocumento"]}</cbc:ReferenceID>
         <cbc:ResponseCode listAgencyName="PE:SUNAT" 
-                          listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo09">{data['responseCode']}</cbc:ResponseCode>
+                          listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo10">{data['responseCode']}</cbc:ResponseCode>
         <cbc:Description><![CDATA[{data['descripcion']}]]></cbc:Description>
     </cac:DiscrepancyResponse>
 
@@ -144,57 +144,48 @@ def stringNotaCredito(data, fileName):
                 <cbc:TaxAmount currencyID="PEN">{tax["MontoTotalImpuesto"]}</cbc:TaxAmount>
                 <cac:TaxCategory>
                     <cbc:ID schemeID="UN/ECE 5305" schemeName="Tax Category Identifier" 
-                            schemeAgencyName="United Nations Economic Commission for Europe">S</cbc:ID>
-                    <cbc:Percent>18</cbc:Percent>
-                    <cbc:TaxExemptionReasonCode listAgencyName="PE:SUNAT" 
-                                                listName="Afectacion del IGV" 
-                                                listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">10</cbc:TaxExemptionReasonCode>
+                            schemeAgencyName="United Nations Economic Commission for Europe">{tax["cod4"]}</cbc:ID>
                     <cac:TaxScheme>
-                        <cbc:ID schemeID="UN/ECE 5153" schemeName="Codigo de tributos" 
-                                schemeAgencyID="6">{tax["cod1"]}</cbc:ID>
+                        <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">{tax["cod1"]}</cbc:ID>
                         <cbc:Name>{tax["cod2"]}</cbc:Name>
                         <cbc:TaxTypeCode>{tax["cod3"]}</cbc:TaxTypeCode>
                     </cac:TaxScheme>
                 </cac:TaxCategory>
             </cac:TaxSubtotal>'''
+        
+        itemTaxes = f'''<cac:TaxTotal>
+            <cbc:TaxAmount currencyID="PEN">{item["MontoTotalImpuesto"]}</cbc:TaxAmount>
+            {itemTaxSubtotal}
+        </cac:TaxTotal>'''
 
         thing += f'''
-        <cac:CreditNoteLine>
+        <cac:DebitNoteLine>
             <cbc:ID>{innerId}</cbc:ID>
-            <cbc:CreditedQuantity unitCode="{item["unidadMedida"]}">{item["CantidadUnidadesItem"]}</cbc:CreditedQuantity>
-            <cbc:LineExtensionAmount currencyID="PEN">{item["totalValorVenta"]}</cbc:LineExtensionAmount>
-            <cac:PricingReference>
-                <cac:AlternativeConditionPrice>
-                    <cbc:PriceAmount currencyID="PEN">{item["precioUnitarioConImpuestos"]}</cbc:PriceAmount>
-                    <cbc:PriceTypeCode listAgencyName="PE:SUNAT" 
-                                       listName="Tipo de Precio" 
-                                       listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo16">{item["tipoPrecio"]}</cbc:PriceTypeCode>
-                </cac:AlternativeConditionPrice>
-            </cac:PricingReference>
-            <cac:TaxTotal>
-                <cbc:TaxAmount currencyID="PEN">{item["totalTax"]}</cbc:TaxAmount>
-                {itemTaxSubtotal}
-            </cac:TaxTotal>
+            <cbc:DebitedQuantity unitCode="{item["unidadMedida"]}">{item["cantidad"]}</cbc:DebitedQuantity>
+            <cbc:LineExtensionAmount currencyID="PEN">{item["valorVenta"]}</cbc:LineExtensionAmount>
             <cac:Item>
-                <cbc:Description><![CDATA[{item["DescripcionItem"]}]]></cbc:Description>
+                <cbc:Description><![CDATA[{item["descripcion"]}]]></cbc:Description>
                 <cac:SellersItemIdentification>
-                    <cbc:ID>{item["id"]}</cbc:ID>
+                    <cbc:ID>{item["codigoProducto"]}</cbc:ID>
                 </cac:SellersItemIdentification>
             </cac:Item>
             <cac:Price>
-                <cbc:PriceAmount currencyID="PEN">{item["precioUnitario"]}</cbc:PriceAmount>
+                <cbc:PriceAmount currencyID="PEN">{item["precioVenta"]}</cbc:PriceAmount>
             </cac:Price>
-        </cac:CreditNoteLine>'''
-        innerId+=1
+            {itemTaxes}
+        </cac:DebitNoteLine>'''
+        innerId += 1
 
-    fullXML = signature + emisordata + compradorData + taxTotal + legalMonetaryTotal   + thing + "</CreditNote>"
+    final = f'''{signature}
+    {emisordata}
+    {compradorData}
+    {taxTotal}
+    {legalMonetaryTotal}
+    {thing}
+</DebitNote>'''
 
-    folder_path = f"xml/{fileName.replace('.xml', '')}"
-
-    os.makedirs(folder_path, exist_ok=True)
-
-    with open(f'{folder_path}/{fileName}', 'w', encoding='utf-8') as file:
-        file.write(fullXML)
-
-    return f'{folder_path}/{fileName}'
-    
+    # Save the string as XML
+    file_path = f'debito/xml/{fileName.replace(".xml", "")}'
+    os.makedirs(file_path, exist_ok=True)
+    with open(f'{file_path}/{fileName}', 'w', encoding="ISO-8859-1") as file:
+        file.write(final)
