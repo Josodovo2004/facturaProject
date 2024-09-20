@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 import sys, os
-
+import facturaProject.awsData as awsData
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -24,7 +24,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = awsData.secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -83,12 +83,12 @@ WSGI_APPLICATION = 'facturaProject.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": env("ENGINE"),
-        "NAME": env("NAMEDB"),
-        "USER": env("USERDB"),
-        "PASSWORD": env("PASSWORDDB"),
-        "HOST": env("HOSTDB"),
-        "PORT": env("PORTDB"),
+        "ENGINE": awsData.dbEngine,
+        "NAME": awsData.nameDb,
+        "USER": awsData.userDb,
+        "PASSWORD": awsData.passwordDb,
+        "HOST": awsData.hostDb,
+        "PORT": awsData.portDb,
     }
 }
 
@@ -149,7 +149,7 @@ REST_FRAMEWORK = {
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'SIGNING_KEY': env('SHARED_SECRET_KEY'),  # The shared secret key across services
+    'SIGNING_KEY': awsData.sharedKey,  # The shared secret key across services
     'AUTH_HEADER_TYPES': ('Bearer',),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Adjust as necessary
 }

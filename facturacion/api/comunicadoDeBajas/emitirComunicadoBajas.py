@@ -1,6 +1,6 @@
 from lxml import etree as ET
 from django.http import JsonResponse
-from .emitirComunicadoBajas import stringAnulacionF
+from .stringComunicadoBajas import stringAnulacionF
 from datetime import date
 from facturacion.api.consultarTicket import consultarTicket
 from facturacion.api.xml_envio import envio_xml
@@ -9,34 +9,13 @@ from facturacion.api.modify_xml import modify_xml
 import zipfile
 import base64
 import os
-from facturacion.models import Comprobante
 import zipfile
 
 def emitirComunicadoBajas(request):
     idComprobante = request.GET.get('comprobante_id')
-    motivo = request.GET.get("motivo")
-    comprobante: Comprobante = Comprobante.objects.filter(id = idComprobante).first()
-    
-    data = {
-        "comunicado": {
-            "id" : f'RA-{str(date.today()).replace("-", "")}-1',
-            "fecha" : date.today(),
-        },
-        "emisor" : {
-            "documento" : comprobante.emisor.numeroDocumento,
-            "tipoDocumento" : comprobante.emisor.tipoDocumento.codigo,
-            "RazonSocial" : comprobante.emisor.razonSocial,	
-        },
-        "comprobante" : {
-            "fecha" : comprobante.fechaEmision,
-            "tipoDocumento" : comprobante.tipoComprobante.codigo,
-            "serie" : comprobante.serie,
-            "numero" : comprobante.numeroComprobante,
-            "motivo" : motivo,
-        }
-    }
+    data = request.GET.get("data")
 
-    fileName = comprobante.emisor.numeroDocumento+ '-' + data["comunicado"]["id"] + ".xml"
+    fileName = data['emisor']['numeroDocumento']+ '-' + data["comunicado"]["id"] + ".xml"
 
     filePath = stringAnulacionF(data, fileName)
     
@@ -45,7 +24,7 @@ def emitirComunicadoBajas(request):
     encodedZip = zip_and_encode_base64(filePath)
 
     #obtener la respuesta de sunat
-    response = envio_xml(comprobante, fileName, encodedZip, False)
+    response = envio_xml(fileName, encodedZip, False)
 
     zipData = base64.b64decode(encodedZip)
 

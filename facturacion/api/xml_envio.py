@@ -1,5 +1,6 @@
 import requests
-from facturaProject.settings import env, DEBUG, cacert
+from facturaProject.settings import DEBUG, cacert, url_preuba, urlProduccion, userSol, passwordSol, rucSol
+import facturaProject.awsData as awsData
 
 
 def envio_xml(fileName, encodedZip, tipo=True):
@@ -11,9 +12,9 @@ def envio_xml(fileName, encodedZip, tipo=True):
 
 
     if DEBUG:
-        ws = env('URL_PRUEBA')
+        ws = url_preuba
     else:
-        ws = env('URL_PRODUCCION')
+        ws = urlProduccion
 
     xml_envio = f'''<?xml version="1.0" encoding="utf-8"?>
     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
@@ -22,8 +23,8 @@ def envio_xml(fileName, encodedZip, tipo=True):
         <soapenv:Header>
             <wsse:Security>
                 <wsse:UsernameToken>
-                    <wsse:Username>{env('RUCSOL')}{env('USERSOL')}</wsse:Username>
-                    <wsse:Password>{env('CLAVESOL')}</wsse:Password>
+                    <wsse:Username>{rucSol}{userSol}</wsse:Username>
+                    <wsse:Password>{passwordSol}</wsse:Password>
                 </wsse:UsernameToken>
             </wsse:Security>
         </soapenv:Header>

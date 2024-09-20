@@ -153,8 +153,6 @@ def dxmlFromString(data, fileName : str):
                 </cac:PartyLegalEntity>
             </cac:Party>
         </cac:AccountingCustomerParty>'''
-
-    print('1')
     paymentTerms = ''
     #credito o contado
     i = 1
@@ -182,7 +180,6 @@ def dxmlFromString(data, fileName : str):
             else:
                 break
 
-    print('1')
     taxSubtotal = ''
     for tax in taxes.values():
          taxSubtotal += f'''<cac:TaxSubtotal>

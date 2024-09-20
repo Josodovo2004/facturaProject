@@ -7,7 +7,7 @@ import base64
 import io
 import zipfile
 import json
-from .notaCreditoStringAnulacion import stringNotaCreditoAnulacion
+from .notaCreditoStringAnulacion import stringNotaCredito
 
 def emitirNotaCredito(request):
     # Parse JSON data from the request body

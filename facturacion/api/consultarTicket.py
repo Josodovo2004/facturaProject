@@ -1,10 +1,10 @@
 import requests
-from facturaProject.settings import env, DEBUG
+from facturaProject.settings import DEBUG, cacert, url_preuba, urlProduccion, userSol, passwordSol, rucSol
 def consultarTicket(ticket):
     if DEBUG:
-        ws = env('URL_PRUEBA')
+        ws = url_preuba
     else:
-        ws = env('URL_PRODUCCION')
+        ws = urlProduccion
 
     xml_envio = f'''<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
             xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe"
@@ -12,8 +12,8 @@ def consultarTicket(ticket):
         <soapenv:Header>
                 <wsse:Security>
                     <wsse:UsernameToken>
-                        <wsse:Username>{env('RUCSOL')}{env('USERSOL')}</wsse:Username>
-                        <wsse:Password>{env('CLAVESOL')}</wsse:Password>
+                        <wsse:Username>{rucSol}{userSol}</wsse:Username>
+                        <wsse:Password>{passwordSol}</wsse:Password>
                     </wsse:UsernameToken>
                 </wsse:Security>
         </soapenv:Header>
