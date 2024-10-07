@@ -56,7 +56,7 @@ def emitirComunicadoBajas(request):
 
 # PASO 07 - CONSULTAMOS EL TICKET
 
-    response = consultarTicket(comprobante, ticket)
+    response = consultarTicket(ticket)
     status_code = response.status_code
 
     carpetacdr = f'cdr/{str(fileName).replace('.xml','')}'
