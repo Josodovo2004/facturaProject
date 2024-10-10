@@ -105,6 +105,9 @@ except Exception as e:
     # Set fallback values
     DATABASES["default"]["HOST"] = "localhost"
 
+cacert = 'facturacion\api\certificate\cacert.pem'
+certificadoPrueba = 'facturacion\api\certificate\certificado.pfx'
+certificado= 'facturacion\api\certificate\certificado.p12'
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 

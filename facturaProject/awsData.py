@@ -33,6 +33,8 @@ portDb = response['Parameter']['Value']
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/HOSTDB')
 hostDb = response['Parameter']['Value']
 
+
+#--------datos usuarioSol-------#
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/USERSOL', WithDecryption=True)
 userSol = response['Parameter']['Value']
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/CLAVESOL', WithDecryption=True)
@@ -40,15 +42,21 @@ claveSol = response['Parameter']['Value']
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/RUCSOL')
 RucSol = response['Parameter']['Value']
 
+
+#secret key para user authentication
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/SECRET_KEY', WithDecryption=True)
 secret_key = response['Parameter']['Value']
+
+#ver si estamos en estado de prueba o de produccion
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/DEBUG')
 debugStatus = response['Parameter']['Value']
+
+#urls de sunat
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/URL_PRUEBA')
 urlPrueba = response['Parameter']['Value']
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/URL_PRODUCCION')
 urlProduccion = response['Parameter']['Value']
-response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/development')
-development = response['Parameter']['Value']
+
+#contraseña para la firma digital de los archivos
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/PASSWORDp12', WithDecryption=True)
 passwordP12 = response['Parameter']['Value']

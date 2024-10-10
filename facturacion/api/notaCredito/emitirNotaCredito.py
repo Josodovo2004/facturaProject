@@ -20,7 +20,7 @@ def emitirNotaCredito(request):
     fileName = f'{emisorDict["DocumentoEmisor"]}-07-{comprobanteDict["serieDocumento"]}-{comprobanteDict["numeroDocumento"]}.xml'
     
     # Generate the credit note XML and get its path
-    filePath = stringNotaCreditoAnulacion(data, fileName)
+    filePath = stringNotaCredito(data, fileName)
 
     # Modify the XML if necessary
     modify_xml(filePath)

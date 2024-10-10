@@ -3,12 +3,15 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 from cryptography.hazmat.primitives import serialization
 import base64
 from lxml import etree as ET
-from facturaProject.settings import certificado, certificadoPassword
+from facturaProject.settings import certificado, passwordP12, DEBUG, certificadoPrueba
 
 def modify_xml(file_path):
     try:
-        pfx_path = certificado  # Replace with your .pfx file path
-        pfx_password = certificadoPassword
+        if DEBUG:
+            pfx_path = certificadoPrueba  # Replace with your .pfx file path
+        else:
+            pfx_path = certificado
+        pfx_password = passwordP12
         with open(pfx_path, "rb") as pfx_file:
             pfx_data = pfx_file.read()
 
