@@ -76,7 +76,7 @@ def emitirComprobanteAPI(request):
                                     hashCode = extract_digest_value(filePath)
                                     try:
                                         bucket_name = 'qickartbucket'
-                                        s3_key = f'media/xml/{emisorDict['DocumentoEmisor']}/{fileName}'
+                                        s3_key = f"media/xml/{emisorDict['DocumentoEmisor']}/{fileName}"
                                         client.upload_file(filePath, bucket_name, s3_key)
                                         print("Upload Successful")
                                     except Exception as e:
