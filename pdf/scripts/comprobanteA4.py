@@ -267,7 +267,7 @@ if __name__ == '__main__':
     }
 
     bucket_name = 'qickartbucket'
-    s3_key = f'media/reportes/{data['cabecera']['rucEmisor']}/{data['cabecera']['serieYNumero']}-A4.pdf'
+    s3_key = f"media/reportes/{data['cabecera']['rucEmisor']}/{data['cabecera']['serieYNumero']}-A4.pdf"
     image_path = 'pdf/scripts/logo.png'
     
     generate_pdf(bucket_name, s3_key, image_path, data)

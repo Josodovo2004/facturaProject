@@ -16,7 +16,7 @@ client = boto3.client('s3')
 
 def generate_ticket(bucket_name, s3_key, imagePath, data):
     # Use BytesIO to keep PDF in memory
-    temp_pdf_path = f'./{data['cabecera']['serieYNumero']}-Ticket.pdf'
+    temp_pdf_path = f"./{data['cabecera']['serieYNumero']}-Ticket.pdf"
     
     # Create a new PDF file
 
@@ -264,7 +264,7 @@ if __name__ == '__main__':
     }
     
     bucket_name = 'qickartbucket'
-    s3_key = f'media/{data['cabecera']['rucEmisor']}/reportes/{data['cabecera']['serieYNumero']}-ticket.pdf'
+    s3_key = f"media/{data['cabecera']['rucEmisor']}/reportes/{data['cabecera']['serieYNumero']}-ticket.pdf"
     image_path = 'pdf/scripts/logo.png'
     
     generate_ticket(bucket_name, s3_key, image_path, data)
