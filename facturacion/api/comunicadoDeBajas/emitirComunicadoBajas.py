@@ -59,7 +59,7 @@ def emitirComunicadoBajas(request):
     response = consultarTicket(ticket)
     status_code = response.status_code
 
-    carpetacdr = f'cdr/{str(fileName).replace('.xml','')}'
+    carpetacdr = f"cdr/{str(fileName).replace('.xml','')}"
 
     if status_code == 200:
         doc = ET.fromstring(response.content)
