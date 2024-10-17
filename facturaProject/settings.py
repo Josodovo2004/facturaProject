@@ -11,15 +11,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import environ
 import sys, os
 from facturaProject.awsData import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-env = environ.Env(DEBUG=(bool, False))
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -47,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'corsheaders',
+    'pdf',
 ]
 
 MIDDLEWARE = [
@@ -105,9 +103,9 @@ except Exception as e:
     # Set fallback values
     DATABASES["default"]["HOST"] = "localhost"
 
-cacert = 'facturacion\api\certificate\cacert.pem'
-certificadoPrueba = 'facturacion\api\certificate\certificado.pfx'
-certificado= 'facturacion\api\certificate\certificado.p12'
+cacert = 'facturacion/api/certificate/cacert.pem'
+certificadoPrueba = 'facturacion/api/certificate/certificado.pfx'
+certificado= 'facturacion/api/certificate/certificado.p12'
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -155,7 +153,21 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',  # For application/x-www-form-urlencoded
+        'rest_framework.parsers.MultiPartParser',  # For handling file uploads
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 
 from datetime import timedelta
@@ -164,4 +176,6 @@ SIMPLE_JWT = {
     'SIGNING_KEY': sharedKey,  # The shared secret key across services
     'AUTH_HEADER_TYPES': ('Bearer',),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Adjust as necessary
+    'USER_ID_FIELD': 'id',  # Field used to identify the user
+    'USER_ID_CLAIM': 'user_id',  # Claim name in the token
 }

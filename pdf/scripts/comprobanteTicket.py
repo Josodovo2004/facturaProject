@@ -9,28 +9,37 @@ import qrcode
 from PIL import Image
 from io import BytesIO
 from reportlab.lib.utils import ImageReader
+import boto3
+import os
 
+client = boto3.client('s3')
 
-def generate_ticket(outputPath, imagePath, data):
-    initialHeight = 16*cm
-    width, height = (8*cm, initialHeight)
-    c = canvas.Canvas(outputPath, pagesize=(width, height))
+def generate_ticket(bucket_name, s3_key, imagePath, data):
+    # Use BytesIO to keep PDF in memory
+    temp_pdf_path = f'./{data['cabecera']['serieYNumero']}-Ticket.pdf'
     
-    #--------teniendo en cuenta el numero de items y el largo de sus descripciones aumentamos el largo del ticket de forma dinamica------#
+    # Create a new PDF file
+
+    
+    initialHeight = 16 * cm
+    width, height = (8 * cm, initialHeight)
+    c = canvas.Canvas(temp_pdf_path, pagesize=(width, height))
+
+    # Dynamic height based on the number of items
     style = ParagraphStyle(
         name="CustomStyle",
         fontName="Helvetica",
         fontSize=6,
         textColor=colors.black,
-        leading=7,  # Line height
-        alignment=0,  # Left alignment
+        leading=7,
+        alignment=0,
     )
     extraHeight = 0
     for value in data['items']:
         paragraph = Paragraph(value[3], style)
         paragraph.wrap(3*cm, 1000)
         extraHeight += paragraph.height + 0.15*cm
-        
+
     c.setPageSize((width, initialHeight + extraHeight))
     lLeft = 0.3*cm
     lRight = width - (0.3*cm)
@@ -41,8 +50,7 @@ def generate_ticket(outputPath, imagePath, data):
     
     currentY = lTop - 2.4*cm
     
-    
-    #---------------datos inicio--------------#
+    # Start drawing the ticket details
     separation = 11
     c.setFont("Helvetica-Bold", 6)
     c.drawCentredString(width/2, currentY, data['negocio']['nombre'])
@@ -52,7 +60,7 @@ def generate_ticket(outputPath, imagePath, data):
     currentY -= separation
     c.drawCentredString(width/2, currentY, f"Telefono: {data['negocio']['telefono']}")
     currentY -= separation
-    c.drawCentredString(width/2, currentY, data['cabecera']['rucEmisor'])
+    c.drawCentredString(width/2, currentY, f'R.U.C. N° {data["cabecera"]["rucEmisor"]}')
     currentY -= separation
     
     c.setFont("Helvetica-Bold", 6)
@@ -61,170 +69,159 @@ def generate_ticket(outputPath, imagePath, data):
     c.drawCentredString(width/2, currentY, data['cabecera']['serieYNumero'])
     currentY -= 0.5*cm
     
-    #--------------fecha y datos cliente----------------#
-    
+    # Date and client information
     c.drawString(lLeft, currentY, data['cabecera2']['fecha'])
     currentY -= 0.2*cm
     c.line(lLeft, currentY, lRight, currentY)
     currentY -= 0.4*cm
     
     for key, value in data['cabecera2'].items():
-        key: str
-        value: str = str(value)
         if key == 'fecha':
             continue
         c.setFont("Helvetica-Bold", 6)
         titleLen = c.stringWidth(f'{key.capitalize()}: ', "Helvetica-Bold", 6)
         c.drawString(lLeft, currentY, f'{key.capitalize()}: ')
         c.setFont("Helvetica", 6)
-        c.drawString(lLeft + titleLen, currentY, value)
+        c.drawString(lLeft + titleLen, currentY, str(value))
         currentY -= 0.4*cm
     
+    # Item count
     c.setFont("Helvetica-Bold", 6)
     titleLen = c.stringWidth(f'Items: ', "Helvetica-Bold", 6)
     c.drawString(lLeft, currentY, f'Items: ')
     c.setFont("Helvetica", 6)
     c.drawString(lLeft + titleLen, currentY, str(len(data['items'])))
-    
-    #----------------nombres columnas----------------#
+
+    # Column names
     c.setFont("Helvetica-Bold", 6)
     currentY -= 0.4*cm
     c.line(lLeft, currentY, lRight, currentY)
     currentY -= 0.4*cm
     c.drawString(lLeft, currentY, 'Cant.')
-    c.drawString(lLeft+ 1*cm, currentY, 'DESCRIPCIÓN')
-    c.drawString(lLeft+5.5*cm, currentY, 'P. Unit')
-    c.drawString(lLeft+6.68*cm, currentY, 'TOTAL')
+    c.drawString(lLeft + 1*cm, currentY, 'DESCRIPCIÓN')
+    c.drawString(lLeft + 5.5*cm, currentY, 'P. Unit')
+    c.drawString(lLeft + 6.68*cm, currentY, 'TOTAL')
     
     currentY -= 0.2*cm
     c.line(lLeft, currentY, lRight, currentY)
     
-    #--------------items------------------------#
+    # Items
     c.setFont("Helvetica", 6)
     currentY -= 0.3*cm
-    
-    
+
     for value in data['items']:
         c.drawString(lLeft, currentY, str(value[0]))
         
         paragraph = Paragraph(value[3], style)
         paragraph.wrap(3*cm, 1000)
-        paragraph.drawOn(c, lLeft+ 1*cm, currentY +6 - paragraph.height)
+        paragraph.drawOn(c, lLeft + 1*cm, currentY + 6 - paragraph.height)
         
         c.drawCentredString(lLeft + 5.7*cm, currentY, str(value[4]))
-        length = c.stringWidth(str(value[0]*value[4]), "Helvetica", 6)
-        c.drawString(lRight-length, currentY, str(value[0]*value[4]))
+        length = c.stringWidth(str(value[0] * value[4]), "Helvetica", 6)
+        c.drawString(lRight - length, currentY, str(value[0] * value[4]))
         
         currentY -= paragraph.height + 0.2*cm
-    currentY += paragraph.height -0.2*cm
+    currentY += paragraph.height - 0.2*cm
     c.line(lLeft, currentY, lRight, currentY)
-    #-----------total-----------------#
+
+    # Total
     currentY -= 0.4*cm
     
     for value in data['total']:
-        value: str
-        title=value.capitalize()
-        number=data['total'][value]
-        strWidht = c.stringWidth(str(number), "Helvetica", 6)
+        title = value.capitalize()
+        number = data['total'][value]
+        strWidth = c.stringWidth(str(number), "Helvetica", 6)
         c.setFont("Helvetica", 6)
         if value == 'total':
             c.setFont("Helvetica-Bold", 6)
         c.drawString(lLeft, currentY, title)
-        c.drawString(lRight - 2*cm, currentY, 'S/')
-        c.drawString(lRight - strWidht, currentY, str(number))
+        c.drawString(lRight - 2 * cm, currentY, 'S/')
+        c.drawString(lRight - strWidth, currentY, str(number))
         
         currentY -= 0.4*cm
     
     currentY -= 0.2*cm
     
-    #--------------------datos finales----------------#
-    
+    # Final data
     entero, decimal = str(f"{data['total']['total']:.2f}").split(".")
-    
-    # Convertimos la parte entera a palabras
     palabras_entero = num2words(int(entero), lang='es').capitalize()
 
-    # Convertimos la parte decimal a fracción (dos decimales)
     if int(decimal) == 0:
         resultado = f"{palabras_entero} con 00/100"
     else:
         resultado = f"{palabras_entero} con {decimal}/100"
     
-    # Draw "IMPORTE EN LETRAS"
     c.setFont("Helvetica-Bold", 6)
     c.drawString(lLeft, currentY, f"IMPORTE EN LETRAS: ")
     
     numeroParagraph = Paragraph(f'{resultado.upper()} NUEVOS SOLES', style)
-    numeroParagraph.wrap(width -3.3*cm, 1000)
-    numeroParagraph.drawOn(c, 2.7*cm, currentY - numeroParagraph.height + 6)
-    currentY -= 0.1*cm + numeroParagraph.height
+    numeroParagraph.wrap(width - 3.3 * cm, 1000)
+    numeroParagraph.drawOn(c, 2.7 * cm, currentY - numeroParagraph.height + 6)
+    currentY -= 0.1 * cm + numeroParagraph.height
     
     c.drawString(lLeft, currentY, 'RESUMEN: ')
     c.setFont("Helvetica", 6)
-    c.drawString( 2.7*cm, currentY, data['hashCode'])
+    c.drawString(2.7 * cm, currentY, data['hashCode'])
     
-    currentY -= 0.4*cm
+    currentY -= 0.4 * cm
     
     c.setFont("Helvetica-Bold", 6)
     c.drawString(lLeft, currentY, 'FORMA DE PAGO: ')
     c.setFont("Helvetica", 6)
-    c.drawString(2.7*cm, currentY, data['formaPago'])
+    c.drawString(2.7 * cm, currentY, data['formaPago'])
     
-    #---------------codigo qr----------------#
-    
+    # QR code
     currentY -= (0.6 * cm) + 80
     
-    
     qr = qrcode.QRCode(
-        version=1,  # Adjust according to the size of the content
-        error_correction=qrcode.constants.ERROR_CORRECT_L,  # Error correction level
-        box_size=10,  # Size of the boxes
-        border=4,  # Size of the border
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
     )
-    # Add data to the QR code
     qr.add_data(data['codigoQr'])
     qr.make(fit=True)
 
-    # Create the QR image
     img = qr.make_image(fill="black", back_color="white")
-
-    # Save the image to a BytesIO object
     qr_bytes = BytesIO()
     img.save(qr_bytes)
-    qr_bytes.seek(0)  
+    qr_bytes.seek(0)
     
     qr_image = ImageReader(qr_bytes)
+    c.drawImage(qr_image, (width / 2) - 40, currentY, width=80, height=80)
     
-    c.drawImage(qr_image, (width/2) - 40, currentY, width=80, height=80)
-    
-    #--------------pie del ticket-------------------#
+    # Ticket footer
     c.setFont("Helvetica-Bold", 6)
     
-    currentY -= 0.2*cm
-    c.drawCentredString(width/2, currentY, '!Gracias por su preferencia¡')
+    currentY -= 0.2 * cm
+    c.drawCentredString(width / 2, currentY, '!Gracias por su preferencia¡')
     c.setFont("Helvetica", 6)
-    currentY -= 0.2*cm
-    c.drawCentredString(width/2, currentY, 'www.quikcart.com')
-    
-    currentY -= 0.4*cm
-    c.drawCentredString(width/2, currentY, 'Repesentación impresa de la Boleta de Venta')
-    currentY -= 0.2*cm
-    c.drawCentredString(width/2, currentY, 'electrónica. Consulte su documento en:')
-    currentY -= 0.2*cm
-    c.setFont("Helvetica-Bold", 6)
-    c.drawCentredString(width/2, currentY, 'https://consulta.quikcart.com')    
+    currentY -= 0.2 * cm
+    c.drawCentredString(width / 2, currentY, 'Su opinión es importante para nosotros')
     
     c.save()
-    
-    return outputPath
 
+    # Upload to S3
+    try:
+        client.upload_file(temp_pdf_path, bucket_name, s3_key)
+        print("Upload Successful")
+    except Exception as e:
+        print(f"Upload failed: {e}")
+        return None
+
+    # Delete the local PDF file
+    os.remove(temp_pdf_path)
+
+    # Return the S3 URL
+    return f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
+    
 
 
 if __name__ == '__main__':
 
     data = {
         'cabecera': {
-        'rucEmisor': "R.U.C. N° 10123456789",
+        'rucEmisor': "10123456789",
         'tipoDocumento': 'BOLETA DE VENTA',
         'serieYNumero' : 'BE001-001',
         },
@@ -243,6 +240,14 @@ if __name__ == '__main__':
         'items' : [
             [1, 'Unidad', 'MF465', 'Mochila de Negocios de Gran Capacidad de 15.6 Pulgadas', 150],
             [1, 'Unidad', 'WPddj', 'Whisky Premium Blue Label de 750 ml, Edición Exclusiva', 777],
+            [1, 'Unidad', 'MF465', 'Mochila de Negocios de Gran Capacidad de 15.6 Pulgadas', 150],
+            [1, 'Unidad', 'WPddj', 'Whisky Premium Blue Label de 750 ml, Edición Exclusiva', 777],
+            [1, 'Unidad', 'MF465', 'Mochila de Negocios de Gran Capacidad de 15.6 Pulgadas', 150],
+            [1, 'Unidad', 'WPddj', 'Whisky Premium Blue Label de 750 ml, Edición Exclusiva', 777],
+            [1, 'Unidad', 'MF465', 'Mochila de Negocios de Gran Capacidad de 15.6 Pulgadas', 150],
+            [1, 'Unidad', 'WPddj', 'Whisky Premium Blue Label de 750 ml, Edición Exclusiva', 777],
+            [1, 'Unidad', 'MF465', 'Mochila de Negocios de Gran Capacidad de 15.6 Pulgadas', 150],
+            [1, 'Unidad', 'WPddj', 'Whisky Premium Blue Label de 750 ml, Edición Exclusiva', 777],
         ],
         
         'total': {
@@ -257,6 +262,10 @@ if __name__ == '__main__':
         
         'codigoQr': '20608841599|01|F001|1234|200.00|36.00|2024-10-09|6|20123456789',
     }
-
-    generate_ticket("pdf/scripts/ticker_boleta_venta_electronica.pdf", "pdf/scripts/logo.png", data)
+    
+    bucket_name = 'qickartbucket'
+    s3_key = f'media/{data['cabecera']['rucEmisor']}/reportes/{data['cabecera']['serieYNumero']}-ticket.pdf'
+    image_path = 'pdf/scripts/logo.png'
+    
+    generate_ticket(bucket_name, s3_key, image_path, data)
     

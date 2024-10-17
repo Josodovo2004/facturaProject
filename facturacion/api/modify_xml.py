@@ -3,19 +3,19 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 from cryptography.hazmat.primitives import serialization
 import base64
 from lxml import etree as ET
-from facturaProject.settings import certificado, passwordP12, DEBUG, certificadoPrueba
+from facturaProject.settings import certificado, passwordP12, DEBUG, certificadoPrueba, passwordPfx
 
 def modify_xml(file_path):
     try:
         if DEBUG:
             pfx_path = certificadoPrueba  # Replace with your .pfx file path
+            pfx_password = passwordPfx.encode('utf-8')
         else:
             pfx_path = certificado
-        pfx_password = passwordP12
+            pfx_password = passwordP12.encode('utf-8')  # Ensure password is in bytes
         with open(pfx_path, "rb") as pfx_file:
             pfx_data = pfx_file.read()
-
-        # Extract the certificate and private key
+            # Extract the certificate and private key
         private_key, certificate, additional_certificates = pkcs12.load_key_and_certificates(pfx_data, pfx_password)
 
         # Read the XML file into a string

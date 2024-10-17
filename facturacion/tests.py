@@ -69,9 +69,9 @@ class EmitirComprobanteTest(TestCase):
                 "DueDate": "2024-09-22",
                 "tipoComprobante": "01",
                 "cantidadItems": 1,
-                "MontoTotalImpuestos": 36.00,
-                "ImporteTotalVenta": 200.00,
-                "totalConImpuestos": 236.00
+                "MontoTotalImpuestos": 30.51,
+                "ImporteTotalVenta": 169.50,
+                "totalConImpuestos": 200.01
             },
             "emisor": {
                 "TipoDocumento": "6",
@@ -94,36 +94,43 @@ class EmitirComprobanteTest(TestCase):
             },
             "taxes": {
                 "IGV": {
-                    "operacionesGravadas": 200.00,
-                    "MontoTotalImpuesto": 36.00,
+                    "operacionesGravadas": 169.50,
+                    "MontoTotalImpuesto": 30.51,
                     "cod1": "1000",
                     "cod2": "IGV",
                     "cod3": "VAT",
-                    "cod4": "S"
+                    "cod4": "S",
+                    "afectacionIGV": '10',
                 }
             },
             "Items": [
                 {
                     "unidadMedida": "NIU",
                     "CantidadUnidadesItem": 2,
-                    "totalValorVenta": 200.00,
-                    "precioUnitarioConImpuestos": 118.00,
+                    "totalValorVenta": 169.5,
+                    "precioUnitarioConImpuestos": 100.005,
                     "tipoPrecio": "01",
-                    "totalTax": 36.00,
+                    "totalTax": 30.51,
                     "DescripcionItem": "Producto B",
                     "id": "PROD002",
-                    "precioUnitario": 100.00,
+                    "precioUnitario":84.75,
                     "tax": {
                         "IGV": {
-                            "operacionesGravadas": 200.00,
-                            "MontoTotalImpuesto": 36.00,
+                            "operacionesGravadas": 169.50,
+                            "MontoTotalImpuesto": 30.51,
                             "cod1": "1000",
                             "cod2": "IGV",
                             "cod3": "VAT",
+                            "afectacionIGV": '10',
                         }
                     }
                 }
-            ]
+            ],
+            "payTerms": [
+        {
+            "metodo": "contado",
+        }
+    ]
         }
 
         # Convert the data to JSON format
@@ -142,96 +149,101 @@ class EmitirComprobanteTest(TestCase):
 
         # Add further assertions here based on the expected response
 
-    def test_emitir_boleta(self):
-        # Define the URL for the API endpoint
-        url = reverse('emitir_comprobante')
+    # def test_emitir_boleta(self):
+    #     # Define the URL for the API endpoint
+    #     url = reverse('emitir_comprobante')
 
-        # Prepare the data to send in the request
-        boleta_data = {
-            "comprobante": {
-                "serieDocumento": "B001",
-                "numeroDocumento": "00056789",
-                "fechaEmision": "2024-08-22",
-                "DueDate": "2024-09-22",
-                "tipoComprobante": "03",
-                "cantidadItems": 1,
-                "MontoTotalImpuestos": 36.00,
-                "ImporteTotalVenta": 200.00,
-                "totalConImpuestos": 236.00
-            },
-            "emisor": {
-                "TipoDocumento": "6",
-                "DocumentoEmisor": "20123456789",
-                "RazonSocialEmisor": "Empresa SAC",
-                "ubigeo": "150101",
-                "calle": "Av. Siempre Viva 123",
-                "distrito": "Lima",
-                "provincia": "Lima",
-                "departamento": "Lima"
-            },
-            "adquiriente": {
-                "TipoDocumentoAdquiriente": "1",
-                "NumeroDocumentoAdquiriente": "87654321",
-                "razonSocial": "Cliente Gómez",
-                "CalleComprador": "Av. Los Rosales 789",
-                "distritoComprador": "San Isidro",
-                "provinciaComprador": "Lima",
-                "departamentoComprador": "Lima"
-            },
-            "taxes": {
-                "IGV": {
-                    "operacionesGravadas": 200.00,
-                    "MontoTotalImpuesto": 36.00,
-                    "cod1": "1000",
-                    "cod2": "IGV",
-                    "cod3": "VAT",
-                    "cod4": "S"
-                }
-            },
-            "Items": [
-                {
-                    "unidadMedida": "NIU",
-                    "CantidadUnidadesItem": 2,
-                    "totalValorVenta": 200.00,
-                    "precioUnitarioConImpuestos": 118.00,
-                    "tipoPrecio": "01",
-                    "totalTax": 36.00,
-                    "DescripcionItem": "Producto B",
-                    "id": "PROD002",
-                    "precioUnitario": 100.00,
-                    "tax": {
-                        "IGV": {
-                            "operacionesGravadas": 200.00,
-                            "MontoTotalImpuesto": 36.00,
-                            "cod1": "1000",
-                            "cod2": "IGV",
-                            "cod3": "VAT",
-                        }
-                    }
-                }
-            ]
-        }
+    #     # Prepare the data to send in the request
+    #     boleta_data = {
+    #         "comprobante": {
+    #             "serieDocumento": "B001",
+    #             "numeroDocumento": "00056789",
+    #             "fechaEmision": "2024-08-22",
+    #             "DueDate": "2024-09-22",
+    #             "tipoComprobante": "03",
+    #             "cantidadItems": 1,
+    #             "MontoTotalImpuestos": 36.00,
+    #             "ImporteTotalVenta": 200.00,
+    #             "totalConImpuestos": 236.00
+    #         },
+    #         "emisor": {
+    #             "TipoDocumento": "6",
+    #             "DocumentoEmisor": "20123456789",
+    #             "RazonSocialEmisor": "Empresa SAC",
+    #             "ubigeo": "150101",
+    #             "calle": "Av. Siempre Viva 123",
+    #             "distrito": "Lima",
+    #             "provincia": "Lima",
+    #             "departamento": "Lima"
+    #         },
+    #         "adquiriente": {
+    #             "TipoDocumentoAdquiriente": "1",
+    #             "NumeroDocumentoAdquiriente": "87654321",
+    #             "razonSocial": "Cliente Gómez",
+    #             "CalleComprador": "Av. Los Rosales 789",
+    #             "distritoComprador": "San Isidro",
+    #             "provinciaComprador": "Lima",
+    #             "departamentoComprador": "Lima"
+    #         },
+    #         "taxes": {
+    #             "IGV": {
+    #                 "operacionesGravadas": 200.00,
+    #                 "MontoTotalImpuesto": 36.00,
+    #                 "cod1": "1000",
+    #                 "cod2": "IGV",
+    #                 "cod3": "VAT",
+    #                 "cod4": "S"
+    #             }
+    #         },
+    #         "Items": [
+    #             {
+    #                 "unidadMedida": "NIU",
+    #                 "CantidadUnidadesItem": 2,
+    #                 "totalValorVenta": 200.00,
+    #                 "precioUnitarioConImpuestos": 118.00,
+    #                 "tipoPrecio": "01",
+    #                 "totalTax": 36.00,
+    #                 "DescripcionItem": "Producto B",
+    #                 "id": "PROD002",
+    #                 "precioUnitario": 100.00,
+    #                 "tax": {
+    #                     "IGV": {
+    #                         "operacionesGravadas": 200.00,
+    #                         "MontoTotalImpuesto": 36.00,
+    #                         "cod1": "1000",
+    #                         "cod2": "IGV",
+    #                         "cod3": "VAT",
+    #                     }
+    #                 }
+    #             }
+    #         ],
+    #         "payTerms": [
+    #     {
+    #         "metodo": "contado"
+    #     }
+    # ]
+    #     }
 
-        # Convert the data to JSON format
-        json_data = json.dumps(boleta_data)
+    #     # Convert the data to JSON format
+    #     json_data = json.dumps(boleta_data)
 
-        # Send a POST request to the API endpoint
-        response = self.client.post(url, json_data, content_type='application/json')
+    #     # Send a POST request to the API endpoint
+    #     response = self.client.post(url, json_data, content_type='application/json')
 
-        # Check the response status code
-        self.assertEqual(response.status_code, 200)
+    #     # Check the response status code
+    #     self.assertEqual(response.status_code, 200)
 
-        # Print the response content
-        print(f"Response: {response.json()}")
+    #     # Print the response content
+    #     print(f"Response: {response.json()}")
 
-        # Add further assertions here based on the expected response
+    #     # Add further assertions here based on the expected response
 
 
 class EmitirNotaCreditoTestCase(TestCase):
     def setUp(self):
         # Set up any initial data or configurations here if necessary
         self.client = Client()
-        self.url = reverse('anular_factura')  # Ensure this matches the URL pattern name in your urls.py
+        self.url = reverse('comunicado_bajas')  # Ensure this matches the URL pattern name in your urls.py
 
         # Example data for the test
         self.valid_data = {

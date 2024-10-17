@@ -9,9 +9,14 @@ import qrcode
 from PIL import Image
 from io import BytesIO
 from reportlab.lib.utils import ImageReader
-def generate_pdf(outputPath, imagePath, data):
+import boto3
+import os
+
+client = boto3.client('s3')
+def generate_pdf(bucket_name, s3_key, imagePath, data):
+    temp_pdf_path = './ticket.pdf'
     # Create a canvas
-    c = canvas.Canvas(outputPath, pagesize=A4)
+    c = canvas.Canvas(temp_pdf_path, pagesize=A4)
     width, height = A4
     
     lLeft = cm
@@ -207,6 +212,20 @@ def generate_pdf(outputPath, imagePath, data):
 
     # Save the PDF
     c.save()
+    
+    # Upload to S3
+    try:
+        client.upload_file(temp_pdf_path, bucket_name, s3_key)
+        print("Upload Successful")
+    except Exception as e:
+        print(f"Upload failed: {e}")
+        return None
+
+    # Delete the local PDF file
+    os.remove(temp_pdf_path)
+
+    # Return the S3 URL
+    return f"https://{bucket_name}.s3.amazonaws.com/{s3_key}"
 
 # Generate the PDF
 
@@ -214,7 +233,7 @@ if __name__ == '__main__':
 
     data = {
         'cabecera': {
-        'rucEmisor': "R.U.C. N° 10123456789",
+        'rucEmisor': "10123456789",
         'tipoDocumento': 'BOLETA DE VENTA ',
         'serieYNumero' : 'BE001-001',
         },
@@ -247,4 +266,8 @@ if __name__ == '__main__':
         'codigoQr': '20608841599|01|F001|1234|200.00|36.00|2024-10-09|6|20123456789',
     }
 
-    generate_pdf("pdf/scripts/boleta_venta_electronica.pdf", "pdf/scripts/logo.png", data)
+    bucket_name = 'qickartbucket'
+    s3_key = f'media/reportes/{data['cabecera']['rucEmisor']}/{data['cabecera']['serieYNumero']}-A4.pdf'
+    image_path = 'pdf/scripts/logo.png'
+    
+    generate_pdf(bucket_name, s3_key, image_path, data)

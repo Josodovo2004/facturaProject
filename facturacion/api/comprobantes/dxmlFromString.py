@@ -5,8 +5,9 @@ def dxmlFromString(data, fileName : str):
     emisor = data["emisor"]
     adquiriente =  data["adquiriente"]
     taxes = data["taxes"]
-    items = data["Items"]
+    items = data["items"]
     payTerms = data["payTerms"]
+
 
 
     signature = f'''<?xml version="1.0" encoding="utf-8"?>
@@ -160,7 +161,7 @@ def dxmlFromString(data, fileName : str):
         if value['metodo'] == 'contado':
             paymentTerms += f'''<cac:PaymentTerms>
                 <cbc:ID>FormaPago</cbc:ID>
-                <cbc:PaymentMeansID>{value['metodo']}</cbc:PaymentMeansID>
+                <cbc:PaymentMeansID>Contado</cbc:PaymentMeansID>
             </cac:PaymentTerms> '''
             break
         else:
@@ -225,7 +226,7 @@ def dxmlFromString(data, fileName : str):
                     <cbc:Percent>18</cbc:Percent>
                     <cbc:TaxExemptionReasonCode listAgencyName="PE:SUNAT" 
                                                 listName="Afectacion del IGV" 
-                                                listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">20</cbc:TaxExemptionReasonCode>
+                                                listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">{tax["afectacionIGV"]}</cbc:TaxExemptionReasonCode>
                     <cac:TaxScheme>
                         <cbc:ID schemeID="UN/ECE 5153" schemeName="Codigo de tributos" 
                                 schemeAgencyName="PE:SUNAT">{tax["cod1"]}</cbc:ID>
@@ -260,7 +261,7 @@ def dxmlFromString(data, fileName : str):
             <cac:CommodityClassification>
                 <cbc:ItemClassificationCode listID="UNSPSC" 
                                             listAgencyName="GS1 US" 
-                                            listName="Item Classification">10191509</cbc:ItemClassificationCode>
+                                            listName="Item Classification">{item['codProducto']}</cbc:ItemClassificationCode>
             </cac:CommodityClassification>
         </cac:Item>
         <cac:Price>

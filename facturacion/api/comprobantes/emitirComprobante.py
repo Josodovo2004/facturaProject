@@ -10,40 +10,39 @@ import io
 import zipfile
 import json
 from requests.exceptions import HTTPError, ConnectionError, Timeout
+import boto3
+import os
 
 def emitirComprobanteAPI(request):
+    client = boto3.client('s3')
     try:
-        # Parse JSON data from request body
-        data = json.loads(request.body)
-        
+        try:
+            # Parse JSON data from request body
+            data = json.loads(request.body)
+        except:
+            data = request    
         emisorDict = data['emisor']
         comprobanteDict = data['comprobante']
-        
         # Generate file name
         fileName = f'{emisorDict["DocumentoEmisor"]}-{comprobanteDict["tipoComprobante"]}-{comprobanteDict["serieDocumento"]}-{comprobanteDict["numeroDocumento"]}.xml'
-        
         # Construct the XML file path
-        filePath = dxmlFromString(data, fileName)        
+        filePath = dxmlFromString(data, fileName)   
         # Modify XML (if necessary)
         modify_xml(filePath)
-        
         # Encode the XML file as ZIP and Base64
         encodedZip = zip_and_encode_base64(filePath)
-        
         # Send the XML file via SOAP request
         try:
             response = envio_xml(fileName, encodedZip, tipo=True)
-            response.raise_for_status()  # Raise an HTTPError for bad responses
+            response.raise_for_status() 
+            # Raise an HTTPError for bad responses
         except (HTTPError, ConnectionError, Timeout) as e:
             return JsonResponse({'error': f"HTTP request failed: {str(e)}"}, status=500)
-        
         # Handle the SOAP response
         root: ET = ET.fromstring(response.content)
         if response.status_code == 200:
             try:
                 # Parse the XML response using lxml
-                
-
                 # Find the element that contains the base64 encoded content
                 application_response_element = root.find('.//{*}applicationResponse')
                 
@@ -75,7 +74,21 @@ def emitirComprobanteAPI(request):
                                 # Return a success message as a JSON response
                                 if response_code == '0':
                                     hashCode = extract_digest_value(filePath)
-                                    return JsonResponse({'message': 'Comprobante aceptado', 'hash_code': str(hashCode)})
+                                    try:
+                                        bucket_name = 'qickartbucket'
+                                        s3_key = f'media/xml/{emisorDict['DocumentoEmisor']}/{fileName}'
+                                        client.upload_file(filePath, bucket_name, s3_key)
+                                        print("Upload Successful")
+                                    except Exception as e:
+                                        print(f"Upload failed: {e}")
+                                        return None
+
+                                    # Delete the local PDF file
+                                    os.remove(filePath)
+
+                                    # Return the S3 URL
+                                    
+                                    return hashCode
                                 else:
                                     return JsonResponse({'error': f'{response_code}', 'descripcion': f'{description}'})
                         except zipfile.BadZipFile:

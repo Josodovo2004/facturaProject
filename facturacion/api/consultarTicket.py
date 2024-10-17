@@ -1,8 +1,8 @@
 import requests
-from facturaProject.settings import DEBUG, cacert, url_preuba, urlProduccion, userSol, passwordSol, rucSol
+from facturaProject.settings import DEBUG, cacert, urlPrueba, urlProduccion, userSol, claveSol, RucSol
 def consultarTicket(ticket):
     if DEBUG:
-        ws = url_preuba
+        ws = urlPrueba
     else:
         ws = urlProduccion
 
@@ -12,8 +12,8 @@ def consultarTicket(ticket):
         <soapenv:Header>
                 <wsse:Security>
                     <wsse:UsernameToken>
-                        <wsse:Username>{rucSol}{userSol}</wsse:Username>
-                        <wsse:Password>{passwordSol}</wsse:Password>
+                        <wsse:Username>{RucSol}{userSol}</wsse:Username>
+                        <wsse:Password>{claveSol}</wsse:Password>
                     </wsse:UsernameToken>
                 </wsse:Security>
         </soapenv:Header>

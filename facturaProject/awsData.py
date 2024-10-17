@@ -60,3 +60,7 @@ urlProduccion = response['Parameter']['Value']
 #contraseña para la firma digital de los archivos
 response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/PASSWORDp12', WithDecryption=True)
 passwordP12 = response['Parameter']['Value']
+
+
+response = ssm.get_parameter(Name=f'/Qickart/dev/{service}/passwordPfx', WithDecryption=True)
+passwordPfx = response['Parameter']['Value']
