@@ -6,8 +6,7 @@ from facturacion.api.comprobantes.emitirComprobante import emitirComprobanteAPI
 from rest_framework.request import Request
 from django.http import JsonResponse
 from rest_framework.response import Response
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+
 
 
 def generateComprobantePDF(request):
@@ -23,7 +22,7 @@ def generateComprobantePDF(request):
     pdf_data['cabecera'] = {
         'rucEmisor': data['emisor']['DocumentoEmisor'],
         'tipoDocumento': tipoDocumento,
-        'serieYNumero' : F'{data['comprobante']['serieDocumento']}-{data['comprobante']['numeroDocumento']}',
+        'serieYNumero' : f"{data['comprobante']['serieDocumento']}-{data['comprobante']['numeroDocumento']}",
         }
     
     pdf_data["cabecera2"] = {
@@ -69,7 +68,7 @@ def generateComprobantePDF(request):
         
     pdf_data['observaciones'] = data['observaciones']
     pdf_data['formaPago'] = data['formaPago']
-    pdf_data['codigoQr'] = f'{data['adquiriente']['NumeroDocumentoAdquiriente']}|{data['comprobante']['tipoComprobante']}|{data['comprobante']['serieDocumento']}|{data['comprobante']['numeroDocumento']}|{data['comprobante']['ImporteTotalVenta']}|{data['comprobante']['MontoTotalImpuestos']}|{data['comprobante']['fechaEmision']}|{data['emisor']['TipoDocumento']}|{data['emisor']['DocumentoEmisor']}'
+    pdf_data['codigoQr'] = f"{data['adquiriente']['NumeroDocumentoAdquiriente']}|{data['comprobante']['tipoComprobante']}|{data['comprobante']['serieDocumento']}|{data['comprobante']['numeroDocumento']}|{data['comprobante']['ImporteTotalVenta']}|{data['comprobante']['MontoTotalImpuestos']}|{data['comprobante']['fechaEmision']}|{data['emisor']['TipoDocumento']}|{data['emisor']['DocumentoEmisor']}"
     
     if tipoPDF == 'A4':
         s3_key = f"media/{data['emisor']['DocumentoEmisor']}/reportes/{data['comprobante']['serieDocumento']}-{data['comprobante']['numeroDocumento']}-A4.pdf"
