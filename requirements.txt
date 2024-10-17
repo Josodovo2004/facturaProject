@@ -28,6 +28,7 @@ djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 docopt==0.6.2
 drf-yasg==1.21.7
+gunicorn==23.0.0
 idna==3.7
 inflection==0.5.1
 jmespath==1.0.1
