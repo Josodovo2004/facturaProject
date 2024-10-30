@@ -48,9 +48,8 @@ def stringResumenComprobante(data, fileName):
 
     for i, documento in enumerate(documentos, start=1):
         taxSubtotal = ''
-        for tax in documento['tax']:
-            taxSubtotal += f'''
-            <cac:TaxSubtotal>
+        for tax in documento['tax'].values():
+            taxSubtotal +=  f'''<cac:TaxSubtotal>
                     <cbc:TaxAmount currencyID="{documento['currency']}">{tax['tax_amount']}</cbc:TaxAmount>
                     <cac:TaxCategory>
                         <cac:TaxScheme>
@@ -59,13 +58,17 @@ def stringResumenComprobante(data, fileName):
                             <cbc:TaxTypeCode>{tax['tax_type_code']}</cbc:TaxTypeCode>
                         </cac:TaxScheme>
                     </cac:TaxCategory>
-                </cac:TaxSubtotal>
-'''
+                </cac:TaxSubtotal>'''
             xml += f'''
         <sac:SummaryDocumentsLine>
             <cbc:LineID>{i}</cbc:LineID>
             <cbc:DocumentTypeCode>{documento['document_type_code']}</cbc:DocumentTypeCode>
             <cbc:ID>{documento['id']}</cbc:ID>
+             <cac:AccountingCustomerParty>
+            <cbc:CustomerAssignedAccountID>{documento['dniComprador']}</cbc:CustomerAssignedAccountID>
+            <!-- Tipo documento (1: DNI) - catálogo 06 -->
+            <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
+            </cac:AccountingCustomerParty>
             <cac:Status>
                 <cbc:ConditionCode>{documento['condition_code']}</cbc:ConditionCode>
             </cac:Status>
@@ -82,7 +85,7 @@ def stringResumenComprobante(data, fileName):
 
     xml += '''
     </SummaryDocuments>'''
-
+    print(xml)
     folder_path = f"xml/{fileName.replace('.xml', '')}"
 
     os.makedirs(folder_path, exist_ok=True)

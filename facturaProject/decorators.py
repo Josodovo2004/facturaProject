@@ -2,6 +2,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from functools import wraps
 from rest_framework.response import Response
+from .settings import DEBUG
 
 # Custom JWT authentication that only validates the token, no user lookup
 class CustomJWTAuthentication(JWTAuthentication):
@@ -14,6 +15,9 @@ def jwt_required(view_func):
     def _wrapped_view(self, request, *args, **kwargs):  # Include 'self'
         auth = CustomJWTAuthentication()  # Use the custom class
         try:
+            if DEBUG:
+                return view_func(self, request, *args, **kwargs)  # No authentication in development mode
+        
             # Validate the token and get the user without fetching from the database
             user, token = auth.authenticate(request)
 

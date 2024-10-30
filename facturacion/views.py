@@ -8,9 +8,10 @@ from .api.guiaRemision.emitirGuiaRemision import emitirGuiaRemision
 from .api.comunicadoDeBajas.emitirComunicadoBajas import emitirComunicadoBajas
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from drf_yasg.utils import swagger_auto_schema
-
+from facturaProject.decorators import jwt_required
+from rest_framework.response import Response
 # CRUD views for Entidad
 
 # Define serializers for the input data structure
@@ -332,7 +333,8 @@ def emitirNota_Debito(request):
 )
 @api_view(['POST'])
 def emitir_resumen_diario(request):
-    return emitirResumenComprobante(request)
+    return emitirResumenComprobante(request) 
+
 
 @swagger_auto_schema(
     method='post',

@@ -12,16 +12,11 @@ import json
 
 def emitirResumenComprobante(request):
 
-    data = json.loads(request.body)
-    
+    data = request.data
     fileName = f"{data['emisor']['ruc']}-RC-{str(data['cabecera']['fecha_envio']).replace('-','')}-001.xml"
-
     filePath = stringResumenComprobante(data, fileName)
-
     modify_xml(filePath)
-
     encodedZip = zip_and_encode_base64(filePath)
-
     #obtener la respuesta de sunat
     response = envio_xml(fileName, encodedZip, False)
 
@@ -58,6 +53,7 @@ def emitirResumenComprobante(request):
 
     if status_code == 200:
         doc = ET.fromstring(response.content)
+        print(response.content)
         content_element = doc.find('.//{*}content')
         if content_element is not None and content_element.text:
             cdr = base64.b64decode(content_element.text)
@@ -81,10 +77,10 @@ def emitirResumenComprobante(request):
             response_code = doc_cdr.find('.//{*}ResponseCode').text
 
             if response_code == "0":
-                return JsonResponse({'response' : "RESUMEN DE COMPROBANTES APROBADO"})
+                return JsonResponse({'response': "RESUMEN DE COMPROBANTES APROBADO"}, status=200)
             else:
                 print(doc_cdr.find('.//{*}Description').text)
-                return  JsonResponse({'response' :f"RESUMEN DE COMPROBANTES RECHAZADO CON CODIGO DE ERROR: {response_code}"}, status_code=200)
+                return JsonResponse({'response': f"RESUMEN DE COMPROBANTES RECHAZADO CON CODIGO DE ERROR: {response_code}"}, status=400)
 
                 
 
