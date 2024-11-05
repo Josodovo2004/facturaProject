@@ -121,7 +121,8 @@ class PDFGenerator(APIView):
                     )
                 ),
                 'observaciones': openapi.Schema(type=openapi.TYPE_STRING, description='Observaciones'),
-                'formaPago': openapi.Schema(type=openapi.TYPE_STRING, description='Forma de pago')
+                'formaPago': openapi.Schema(type=openapi.TYPE_STRING, description='Forma de pago'),
+                'tipo_pdf' : openapi.Schema(type=openapi.TYPE_STRING, description='Formato del PDF')
             }
         )
     )

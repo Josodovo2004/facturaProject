@@ -10,7 +10,56 @@ from rest_framework.response import Response
 
 
 def generateComprobantePDF(request):
-    data = json.loads(request.body)
+    olddata = json.loads(request.body)
+    data = {
+        
+            "comprobante": {
+                "serieDocumento": olddata['comprobante']['serie'],
+                "numeroDocumento": olddata['comprobante']['numeroComprobante'],
+                "fechaEmision": olddata['comprobante']['fechaEmision'],
+                "DueDate": olddata['comprobante']['fechaEmision'],
+                "tipoComprobante": olddata['comprobante']['tipoComprobante']['codigo'],
+                "cantidadItems": 0,
+                "MontoTotalImpuestos": 0,
+                "ImporteTotalVenta": 0,
+                "totalConImpuestos": 0
+            },
+            "emisor": {
+                "TipoDocumento": olddata['vendedor']['tipoDocumento']['codigo'],
+                "DocumentoEmisor": olddata['vendedor']['numeroDocumento'],
+                "RazonSocialEmisor": olddata['vendedor']['razonSocial'],
+                "ubigeo": olddata['vendedor']['ubigeo']["codigo"],
+                "calle": olddata['vendedor']['direccion'],
+                "distrito": olddata['vendedor']['ubigeo']["distrito"],
+                "provincia": olddata['vendedor']['ubigeo']["provincia"],
+                "departamento": olddata['vendedor']['ubigeo']["departamento"],
+                "email" : '',
+                'telefono' : olddata['vendedor']['celular']
+            },
+            "adquiriente": {
+                "TipoDocumentoAdquiriente": olddata['adquiriente']['tipoDocumento']['codigo'],
+                "NumeroDocumentoAdquiriente": olddata['adquiriente']['numeroDocumento'],
+                "razonSocial": olddata['adquiriente']['razonSocial'],
+                "CalleComprador": olddata['adquiriente']['direccion'],
+                "distritoComprador": olddata['adquiriente']['ubigeo']["departamento"],
+                "provinciaComprador": olddata['adquiriente']['ubigeo']["departamento"],
+                "departamentoComprador": olddata['adquiriente']['ubigeo']["departamento"]
+            },
+            "taxes": {
+                "IGV": {
+                    "operacionesGravadas": 169.50,
+                    "MontoTotalImpuesto": 30.51,
+                    "cod1": "1000",
+                    "cod2": "IGV",
+                    "cod3": "VAT",
+                    "cod4": "S",
+                    "afectacionIGV": '10',
+                }
+            },
+            "payTerms": olddata['payTerms'],
+            'observaciones': olddata['observaciones'],
+            'formaPago': olddata['formaPago'],
+    }
     tipoPDF = data['tipo_pdf']
     
     

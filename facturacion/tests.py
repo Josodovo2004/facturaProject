@@ -146,6 +146,73 @@ class EmitirComprobanteTest(TestCase):
         self.assertEqual(response.status_code, 200)  # Adjust this if you expect a different status code
 
         
+# data = {
+#     'vendedor': 
+#         {
+#             "id": 6,
+#             "numeroDocumento": "72184433",
+#             "razonSocial": "Nury Marin",
+#             "nombreComercial": "",
+#             "celular": "987456123",
+#             "direccion": "calle 11 se setiembre",
+#             "imagen": "",
+#             "tipoDocumento": "1",
+#             "ubigeo": 1,
+#             "codigoPais": 1
+#         },
+#         'adquiriente': 
+#         {
+#             "id": 6,
+#             "numeroDocumento": "72184433",
+#             "razonSocial": "Nury Marin",
+#             "nombreComercial": "",
+#             "celular": "987456123",
+#             "direccion": "calle 11 se setiembre",
+#             "imagen": "",
+#             "tipoDocumento": "1",
+#             "ubigeo": 1,
+#             "codigoPais": 1
+#         },
+        
+#         'comprobante':
+#             {
+#                 "emisor": 1,
+#                 "adquiriente": 2,
+#                 "tipoComprobante": ,
+#                 "tipoOperacion":, 
+#                 "tipoPago":,
+#                 "serie":,
+#                 "numeroComprobante":, 
+#                 "fechaEmision":,
+#                 "codigoMoneda":,
+#                 "estado":,
+#             }
+            
+#         items: {
+#             {
+#             "id": 3,
+#             "nombre": "Articulo3",
+#             "descripcion": "Articulo3",
+#             "valorUnitario": 5,
+#             "stock": 5,
+#             "peso": 4.0,
+#             "volumen": 3.0,
+#             "unidadMedida": "4A",
+#             "tipoPrecio": "01",
+#             "codigoProducto": "1010152-",
+#             "categoria": 10
+#             'taxes': [
+#                         {
+#                 "porcentaje": null,
+#                 "item": null,
+#                 "impuesto": null,
+#                 "afectacion": null
+#             } ]
+#         },
+#         }
+# }
+
+
 
         # Add further assertions here based on the expected response
 
