@@ -120,7 +120,7 @@ def generate_pdf(bucket_name, s3_key, imagePath, data):
         c.drawString(17.5 * cm, currentY , str(value[4]))
         c.drawString(19 * cm, currentY , str(value[4] * value[0]))
         
-        currentY -= paragrph.height + 10
+        currentY -= paragrph.height + 20
         
         totalFrameHeight += paragrph.height + 10
     
