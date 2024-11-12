@@ -84,12 +84,12 @@ WSGI_APPLICATION = 'facturaProject.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": dbEngine,
-        "NAME": nameDb,
-        "USER": userDb,
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": 'facturaProject',
+        "USER": 'postgres',
         "PASSWORD": passwordDb,
-        "HOST": hostDb,
-        "PORT": portDb,
+        "HOST": 'db',
+        "PORT": '5432',
     }
 }
 
