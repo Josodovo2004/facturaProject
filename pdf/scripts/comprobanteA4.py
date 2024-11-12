@@ -116,7 +116,7 @@ def generate_pdf(bucket_name, s3_key, imagePath, data):
         c.drawString(1.5 * cm, currentY , str(value[0]))
         c.drawString(3.3 * cm, currentY ,str(value[1]))
         c.drawString(5.5 * cm, currentY ,str(value[2]))
-        paragrph.drawOn(c, 8*cm, currentY - paragrph.height + 10)
+        paragrph.drawOn(c, 8*cm, currentY - paragrph.height + 20)
         c.drawString(17.5 * cm, currentY , str(value[4]))
         c.drawString(19 * cm, currentY , str(value[4] * value[0]))
         
