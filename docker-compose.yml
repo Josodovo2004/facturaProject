@@ -21,6 +21,7 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    restart: always
 
   web:
     build: .
@@ -40,7 +41,7 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-
+    restart: always
 volumes:
   postgres_data:
 
