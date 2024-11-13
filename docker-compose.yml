@@ -24,7 +24,10 @@ services:
     restart: always
 
   web:
-    build: .
+    build:
+      context: .
+      labels:
+        - "project=facturaProject"
     command: bash -c "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 facturaProject.wsgi:application"
     volumes:
       - .:/app
