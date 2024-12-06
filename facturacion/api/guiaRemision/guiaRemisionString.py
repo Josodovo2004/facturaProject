@@ -28,7 +28,7 @@ def crear_xml_guia_remision(data, nombre_xml):
     <cbc:ID>{cabecera['serie']}-{cabecera['correlativo']}</cbc:ID>
     <cbc:IssueDate>{cabecera['fecha_emision']}</cbc:IssueDate>
     <cbc:IssueTime>10:10:10</cbc:IssueTime>
-    <cbc:DespatchAdviceTypeCode>{cabecera['tipo_comprobante']}</cbc:DespatchAdviceTypeCode>
+    <cbc:DespatchAdviceTypeCode>09</cbc:DespatchAdviceTypeCode> 
     <cbc:Note>--</cbc:Note>
     <cac:Signature>
         <cbc:ID>{cabecera['serie']}-{cabecera['correlativo']}</cbc:ID>
@@ -50,14 +50,14 @@ def crear_xml_guia_remision(data, nombre_xml):
     emisord = f'''<cac:DespatchSupplierParty>
         <cac:Party>
             <cac:PartyIdentification>
-                <cbc:ID schemeID="{emisor['tipodoc']}" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">{emisor['ruc']}</cbc:ID>
+                <cbc:ID schemeID="{emisor['tipo_documento']}" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">{emisor['ruc']}</cbc:ID>
             </cac:PartyIdentification>
             <cac:PartyLegalEntity>
                 <cbc:RegistrationName><![CDATA[{emisor['razon_social']}]]></cbc:RegistrationName>
             </cac:PartyLegalEntity>
         </cac:Party>
     </cac:DespatchSupplierParty>'''
-    comprador = '''
+    comprador = f'''
     <cac:DeliveryCustomerParty>
         <cac:Party>
             <cac:PartyIdentification>
@@ -68,8 +68,9 @@ def crear_xml_guia_remision(data, nombre_xml):
             </cac:PartyLegalEntity>
         </cac:Party>
     </cac:DeliveryCustomerParty>
-
     '''
+    
+    #---------------------------shipment start------------------------#
     shipment_parts = []
 
     # Parte base del XML para Shipment
@@ -98,9 +99,9 @@ def crear_xml_guia_remision(data, nombre_xml):
                 <cac:PartyIdentification>
                     <cbc:ID schemeID="{transportista_tipo_doc}">{transportista_nro_doc}</cbc:ID>
                 </cac:PartyIdentification>
-                <cac:PartyLegalEntity>
-                    <cbc:RegistrationName><![CDATA[{transportista_nombre}]]></cbc:RegistrationName>
-                </cac:PartyLegalEntity>
+                <cac:PartyName>
+                    <cbc:Name><![CDATA[{transportista_nombre}]]></cbc:Name>
+                </cac:PartyName>
             </cac:CarrierParty>
         '''.format(
             transportista_tipo_doc=cabecera['transportista_tipo_doc'],
@@ -170,6 +171,8 @@ def crear_xml_guia_remision(data, nombre_xml):
 
     # Cerrar la etiqueta principal
     shipment_parts.append('</cac:Shipment>')
+    
+    #--------------------shipment finish---------------------#
     # Agregar las líneas de despacho
     for item in items:
         xml += f'''<cac:DespatchLine>

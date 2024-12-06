@@ -34,7 +34,7 @@ def stringNotaCredito(data, fileName):
     <cac:DiscrepancyResponse>
         <cbc:ReferenceID>{documentoRelacionado["serieDocumento"]}-{documentoRelacionado["numeroDocumento"]}</cbc:ReferenceID>
         <cbc:ResponseCode listAgencyName="PE:SUNAT" 
-                          listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo09">{data['responseCode']}</cbc:ResponseCode>
+                          listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo09">{data['typeCode']}</cbc:ResponseCode>
         <cbc:Description><![CDATA[{data['descripcion']}]]></cbc:Description>
     </cac:DiscrepancyResponse>
 

@@ -353,7 +353,7 @@ class EmitirNotaCreditoTestCase(TestCase):
                     "CantidadUnidadesItem": "2",
                     "totalValorVenta": "1000.00",
                     "precioUnitarioConImpuestos": "590.00",
-                    "tipoPrecio": "01",  # Precio de venta unitario
+                    "tipoPrecio": "01",
                     "totalTax": "180.00",
                     "DescripcionItem": "Producto A",
                     "id": "A001",
