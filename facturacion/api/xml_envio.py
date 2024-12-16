@@ -1,6 +1,5 @@
 import requests
 from facturaProject.settings import DEBUG, cacert, urlPrueba, urlProduccion, userSol, claveSol, RucSol
-import facturaProject.awsData as awsData
 
 
 def envio_xml(fileName, encodedZip, tipo=True):

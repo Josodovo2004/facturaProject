@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import sys, os
-from facturaProject.awsData import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -22,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = secret_key
+SECRET_KEY = 'secret_key'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -87,7 +86,7 @@ DATABASES = {
         "ENGINE": 'django.db.backends.postgresql',
         "NAME": 'facturaProject',
         "USER": 'postgres',
-        "PASSWORD": passwordDb,
+        "PASSWORD": '1234',
         "HOST": 'db',
         "PORT": '5432',
     }
@@ -167,9 +166,17 @@ REST_FRAMEWORK = {
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'SIGNING_KEY': sharedKey,  # The shared secret key across services
+    'SIGNING_KEY': 'sharedKey',  # The shared secret key across services
     'AUTH_HEADER_TYPES': ('Bearer',),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Adjust as necessary
     'USER_ID_FIELD': 'id',  # Field used to identify the user
     'USER_ID_CLAIM': 'user_id',  # Claim name in the token
 }
+
+urlPrueba = 'https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService'
+urlProduccion='https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService?wsdl'
+userSol='MCCULEIN'
+claveSol='ovenneclu'
+RucSol='20605138293'
+passwordP12='Jose_d@vid2004'
+passwordPfx= 'Jose_d@vid2004'

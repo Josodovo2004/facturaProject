@@ -100,7 +100,6 @@ def dxmlFromString(data, fileName : str):
     </cac:AccountingSupplierParty>
     '''
 
-    print('1')
     if adquiriente.get("NumeroDocumentoAdquiriente"):
         compradorData = f'''<cac:AccountingCustomerParty>
             <cac:Party>
@@ -211,7 +210,7 @@ def dxmlFromString(data, fileName : str):
         <cbc:TaxInclusiveAmount currencyID="PEN">{comprobante["totalConImpuestos"]}</cbc:TaxInclusiveAmount>
         <cbc:PayableAmount currencyID="PEN">{comprobante["totalConImpuestos"]}</cbc:PayableAmount>
     </cac:LegalMonetaryTotal>'''
-    print('1')
+
     thing = ''
     innerId = 1
     for item in items:
@@ -272,7 +271,6 @@ def dxmlFromString(data, fileName : str):
         innerId+=1
         thing += newItem
 
-    print('1')
     xml_invoice = signature + emisordata + compradorData + paymentTerms + taxTotal + legalMonetaryTotal + thing + '</Invoice>'
 
     # Extract the folder path
