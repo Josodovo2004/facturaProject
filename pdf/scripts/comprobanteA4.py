@@ -23,8 +23,10 @@ def generate_pdf(bucket_name, s3_key, imagePath, data):
     lRight = width - cm
     lTop = height - cm
     lBot = cm
-    
-    c.drawImage(imagePath, lLeft + 2.5*cm, lTop - 3*cm, 6*cm, 3*cm)
+    try:
+        c.drawImage(imagePath, lLeft + 2.5*cm, lTop - 3*cm, 6*cm, 3*cm)
+    except:
+        pass
     
 
    #-----------------cabecera gris---------------#
@@ -117,8 +119,8 @@ def generate_pdf(bucket_name, s3_key, imagePath, data):
         c.drawString(3.3 * cm, currentY +10,str(value[1]))
         c.drawString(5.5 * cm, currentY +10,str(value[2]))
         paragrph.drawOn(c, 8*cm, currentY - paragrph.height + 20)
-        c.drawString(17.5 * cm, currentY +10, str(value[4]))
-        c.drawString(19 * cm, currentY +10, str(value[4] * value[0]))
+        c.drawString(17.5 * cm, currentY +10, str(value[4]/value[0]))
+        c.drawString(19 * cm, currentY +10, str(value[4]))
         
         currentY -= paragrph.height + 10
         

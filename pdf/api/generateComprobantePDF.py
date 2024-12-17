@@ -13,8 +13,6 @@ def generateComprobantePDF(request):
     data = json.loads(request.body)
     tipoPDF = data['tipo_pdf']
     
-    
-    
     pdf_data = {}
     
     tipoDocumento = 'FACTURA' if data['comprobante']['tipoComprobante'] == '01' else 'BOLETA DE VENTA'
@@ -40,24 +38,43 @@ def generateComprobantePDF(request):
     
     pdf_data['items'] = []
     pdf_data['total'] = {}
-    pdf_data["total"]['subtotal'] = 0
+    
+    # Initialize subtotal and taxes
+    subtotal = 0
+    total_taxes = 0
     
     for item in data['items']:
-        pdf_data['items'].append([item['CantidadUnidadesItem'], item['unidadMedida'], item['codProducto'], item['descripcion'], item['totalValorVenta'] + item['totalTax']])
-        pdf_data["total"]['subtotal'] += item['totalValorVenta']
+        # Calculate item's total (value without tax)
+        item_total = item['totalValorVenta']
+        subtotal += item_total 
+        
+        # Add item to PDF data
+        pdf_data['items'].append([
+            item['CantidadUnidadesItem'], 
+            item['unidadMedida'], 
+            item['codProducto'], 
+            item['descripcion'], 
+            item_total  # Use the value without tax
+        ])
+        
+        # Calculate and accumulate taxes
         tax: dict = item['tax']
-        for value in tax.keys():
-            if value not in pdf_data['total'].keys():
-                pdf_data["total"][value] = tax[value]['MontoTotalImpuesto']
+        for tax_name, tax_details in tax.items():
+            tax_amount = tax_details['MontoTotalImpuesto']
+            total_taxes += tax_amount
+            
+            # Add or update tax in total
+            if tax_name not in pdf_data['total']:
+                pdf_data['total'][tax_name] = tax_amount
             else:
-                pdf_data["total"][value] += tax[value]['MontoTotalImpuesto']
+                pdf_data['total'][tax_name] += tax_amount
     
-    print(pdf_data['items'])
-        
-    pdf_data['total']['total'] = 0        
-    for value in pdf_data["total"].values():
-        pdf_data['total']['total'] += value
-        
+    # Set subtotal
+    pdf_data['total']['subtotal'] = subtotal
+    
+    # Calculate total (subtotal + taxes)
+    pdf_data['total']['total'] = subtotal + total_taxes
+    
     if tipoDocumento == 'FACTURA':
         hashcode = emitirComprobanteAPI(data)
         if type(hashcode) == JsonResponse:
@@ -70,12 +87,13 @@ def generateComprobantePDF(request):
     pdf_data['formaPago'] = data['formaPago']
     pdf_data['codigoQr'] = f"{data['adquiriente']['NumeroDocumentoAdquiriente']}|{data['comprobante']['tipoComprobante']}|{data['comprobante']['serieDocumento']}|{data['comprobante']['numeroDocumento']}|{data['comprobante']['ImporteTotalVenta']}|{data['comprobante']['MontoTotalImpuestos']}|{data['comprobante']['fechaEmision']}|{data['emisor']['TipoDocumento']}|{data['emisor']['DocumentoEmisor']}"
     
+    print(pdf_data)
+    
     if tipoPDF == 'A4':
         s3_key = f"media/{data['emisor']['DocumentoEmisor']}/reportes/{data['comprobante']['serieDocumento']}-{data['comprobante']['numeroDocumento']}-A4.pdf"
-        url_pdf = generate_pdf('qickartbucket', s3_key,data['image_path'], pdf_data)
+        url_pdf = generate_pdf('qickartbucket', s3_key, data['image_path'], pdf_data)
     else: 
         s3_key = f"media/{data['emisor']['DocumentoEmisor']}/reportes/{data['comprobante']['serieDocumento']}-{data['comprobante']['numeroDocumento']}-Ticket.pdf"
-        url_pdf = generate_ticket('qickartbucket', s3_key,data['image_path'], pdf_data)
+        url_pdf = generate_ticket('qickartbucket', s3_key, data['image_path'], pdf_data)
     
     return Response(url_pdf)
-
