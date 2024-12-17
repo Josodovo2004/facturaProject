@@ -25,12 +25,16 @@ def emitirComprobanteAPI(request):
         comprobanteDict = data['comprobante']
         # Generate file name
         fileName = f'{emisorDict["DocumentoEmisor"]}-{comprobanteDict["tipoComprobante"]}-{comprobanteDict["serieDocumento"]}-{comprobanteDict["numeroDocumento"]}.xml'
+        print('1')
         # Construct the XML file path
-        filePath = dxmlFromString(data, fileName)   
+        filePath = dxmlFromString(data, fileName) 
+        print('2')  
         # Modify XML (if necessary)
         modify_xml(filePath)
+        print('3')
         # Encode the XML file as ZIP and Base64
         encodedZip = zip_and_encode_base64(filePath)
+        print('4')
         # Send the XML file via SOAP request
         try:
             response = envio_xml(fileName, encodedZip, tipo=True)
@@ -38,6 +42,7 @@ def emitirComprobanteAPI(request):
             # Raise an HTTPError for bad responses
         except (HTTPError, ConnectionError, Timeout) as e:
             return JsonResponse({'error': f"HTTP request failed: {str(e)}"}, status=500)
+        print('5')
         # Handle the SOAP response
         root: ET = ET.fromstring(response.content)
         if response.status_code == 200:

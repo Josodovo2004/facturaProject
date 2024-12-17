@@ -6,7 +6,9 @@ def dxmlFromString(data, fileName : str):
     adquiriente =  data["adquiriente"]
     taxes = data["taxes"]
     items = data["items"]
-    payTerms = data["payTerms"]
+    payTerms = data["payterms"]
+    
+    print('10')
 
 
 
